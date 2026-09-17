@@ -20,7 +20,12 @@
 
 - **Lát cắt:** Một học viên dạy lại Context Window cho AI học trò; AI phát hiện một lỗ hổng quan trọng và hỏi ngược có dẫn nguồn; học viên sửa lời giải thích và trả lời đúng câu vận dụng.
 
-- **Automation + willing users:** AI chỉ phân tích lời giải thích, dẫn nguồn và hỏi ngược; không tự chấm điểm chính thức. Willing users: Trâm Anh, Trọng Đạt, Quang Đạo.
+- **Automation + willing users:** AI chỉ phân tích lời giải thích, dẫn nguồn và hỏi ngược; không tự chấm điểm chính thức. Willing users (ngoài nhóm, đã hỏi và đồng ý):
+Lê Nguyễn Trâm Anh - học viên khóa 4 
+Nguyễn Huy Cương - học viên khóa 4 
+Nguyễn Đặng Thành Vinh - học viên khóa 2
+
+  
 
 - **Phân công:**
   - Nguyễn Quang Tuấn — 2A202602470 — Đội trưởng; AI/grounding và frontend.
