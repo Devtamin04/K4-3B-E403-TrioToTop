@@ -1,0 +1,45 @@
+# Cấu hình deploy Render. Render đọc file này khi tạo Blueprint từ repo.
+#
+# Session lưu trong RAM nên phải chạy một instance duy nhất và không được
+# scale ngang — nhiều instance sẽ khiến học viên mất phiên giữa chừng.
+services:
+  - type: web
+    name: teachback-ai
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install --upgrade pip && pip install -e .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /topics
+    numInstances: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+
+      # Khoá API nhập tay trên dashboard, không ghi vào file này.
+      - key: OLLAMA_API_KEY
+        sync: false
+
+      - key: LLM_PROVIDER
+        value: ollama
+      - key: OLLAMA_BASE_URL
+        value: https://ollama.com
+      - key: EVALUATOR_MODEL
+        value: gpt-oss:120b
+      - key: EVALUATOR_PROMPT_VERSION
+        value: evaluator_v2
+      - key: OLLAMA_USE_FORMAT
+        value: "false"
+      - key: EVALUATOR_MAX_ATTEMPTS
+        value: "2"
+
+      # Gói free của Render ngủ sau 15 phút không dùng, nên lượt gọi đầu
+      # sau khi ngủ dậy chậm hơn; để timeout rộng cho khỏi đứt giữa chừng.
+      - key: EVALUATOR_TIMEOUT_SECONDS
+        value: "60"
+      - key: STUDENT_BACKEND
+        value: llm
+      - key: STUDENT_MODEL
+        value: gpt-oss:120b
+      - key: STUDENT_TIMEOUT_SECONDS
+        value: "60"
