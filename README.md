@@ -5,6 +5,9 @@ phát hiện chỗ còn thiếu hoặc sai, rồi **hỏi ngược** đúng ch�
 không đưa đáp án.
 
 > Track D3 — Học bằng cách dạy (phương pháp Feynman).
+> 
+> 📊 **Slide thuyết trình (CP5):** [`Học bằng cách dạy (TeachBack AI).pdf`](./Học%20bằng%20cách%20dạy%20(TeachBack%20AI).pdf)
+
 
 ## Chạy thử
 
