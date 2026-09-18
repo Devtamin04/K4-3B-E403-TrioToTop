@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from pathlib import Path
 
 from app.adapters.topics_yaml import YamlTopicRepository
@@ -27,8 +28,21 @@ def test_every_case_references_real_ids() -> None:
             assert case.expect_target in concept_ids | misconception_ids, case.id
 
 
-def test_categories_cover_all_four_difficulty_layers() -> None:
-    assert {"thuong", "hieu_sai", "tan_cong", "hiem"} <= {case.category for case in _cases()}
+def test_every_difficulty_layer_has_at_least_two_cases() -> None:
+    """Guide §2.5: mỗi lớp chỗ khó phải có ≥2 case trong golden set."""
+
+    counts = Counter(case.layer for case in _cases())
+    for layer in ("1", "2", "3", "4"):
+        assert counts[layer] >= 2, f"lớp {layer} chỉ có {counts[layer]} case"
+
+
+def test_some_cases_come_from_real_chatlog() -> None:
+    """Case từ chatlog thật phải ghi nguồn truy vết được."""
+
+    from_log = [case for case in _cases() if case.source == "chatlog"]
+    assert len(from_log) >= 5
+    for case in from_log:
+        assert "T0" in case.note, f"{case.id} thiếu turn_id dẫn nguồn"
 
 
 def test_at_least_five_cases_are_predicted_to_fail() -> None:

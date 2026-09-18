@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
@@ -28,6 +29,9 @@ class GoldenCase(BaseModel):
 
     id: str = Field(min_length=1)
     category: str = Field(min_length=1)
+    layer: Literal["1", "2", "3", "4"] = "4"
+    """Lớp chỗ khó theo guide §2.5: ①nguồn sự thật ②mơ hồ ③ngoài phạm vi ④đặc thù domain."""
+    source: Literal["tu_xay", "chatlog"] = "tu_xay"
     message: str = Field(min_length=1)
     grid: str = ""
     prior_covered: list[str] = Field(default_factory=list)
@@ -51,6 +55,8 @@ class CaseOutcome:
     failures: tuple[str, ...]
     message: str = ""
     grid: str = ""
+    layer: str = ""
+    source: str = ""
     predicted_fail: bool = False
 
     @property
@@ -75,13 +81,21 @@ class GoldenReport:
         return self.passed / self.total if self.total else 0.0
 
     def by_category(self) -> dict[str, tuple[int, int]]:
+        return self._tally(lambda item: item.category)
+
+    def by_layer(self) -> dict[str, tuple[int, int]]:
+        """Độ phủ theo 4 lớp chỗ khó — TA soát theo bảng này."""
+
+        return self._tally(lambda item: item.layer)
+
+    def _tally(self, key: Callable[[CaseOutcome], str]) -> dict[str, tuple[int, int]]:
         table: dict[str, list[int]] = {}
         for outcome in self.outcomes:
-            row = table.setdefault(outcome.category, [0, 0])
+            row = table.setdefault(key(outcome), [0, 0])
             row[1] += 1
             if outcome.passed:
                 row[0] += 1
-        return {key: (value[0], value[1]) for key, value in table.items()}
+        return {name: (value[0], value[1]) for name, value in table.items()}
 
 
 def load_golden_set(path: Path) -> list[GoldenCase]:
@@ -151,6 +165,8 @@ def run_case(
         failures=tuple(failures),
         message=case.message,
         grid=case.grid,
+        layer=case.layer,
+        source=case.source,
         predicted_fail=bool(case.expect_fail),
     )
 
@@ -192,6 +208,8 @@ def write_run_artifacts(
                         "case_id": item.case_id,
                         "category": item.category,
                         "grid": item.grid,
+                        "layer": item.layer,
+                        "source": item.source,
                         "input": item.message,
                         "action": item.action,
                         "target": item.target,

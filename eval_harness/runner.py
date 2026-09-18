@@ -90,8 +90,12 @@ def _run_golden(*, live: bool) -> int:
             print(f"    ↳ {reason}")
 
     print()
+    print("  Theo lớp chỗ khó (guide §2.5):")
+    for layer, (passed, total) in sorted(report.by_layer().items()):
+        print(f"    lớp {layer}   {passed}/{total}")
+    print("  Theo nhóm:")
     for category, (passed, total) in sorted(report.by_category().items()):
-        print(f"  {category:<16} {passed}/{total}")
+        print(f"    {category:<16} {passed}/{total}")
 
     predicted = [item for item in report.outcomes if item.predicted_fail]
     held = sum(1 for item in predicted if item.prediction_held)
