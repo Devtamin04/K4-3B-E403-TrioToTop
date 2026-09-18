@@ -106,8 +106,19 @@ Chỗ yếu đã biết nhưng **chưa** có trong bộ đề (nợ cho lượt 
 
 - Phiên nhiều lượt liên tiếp (bộ hiện tại chỉ đo một lượt/case)
 - Người học sửa sai giữa chừng rồi lại sai lại
-- Câu trả lời của AI Student thỉnh thoảng ra tiếng Anh ở chủ đề khác
-  (`transformer_attention`) — lỗi đã biết, chưa đưa vào golden set
+
+### Đính chính: lỗi "AI trả lời tiếng Anh" không tồn tại
+
+Trước đây nhóm ghi nhận AI Student thỉnh thoảng trả lời tiếng Anh dù người học
+viết tiếng Việt, và kết luận model bỏ qua chỉ dẫn ngôn ngữ trong `student_v1`.
+
+Kết luận đó **sai**. Nguyên nhân thật: script thử nghiệm truyền `history=()`,
+khiến `latest_human_message` rỗng — model không thấy chữ tiếng Việt nào của người
+học nên rơi về tiếng Anh. Chạy qua luồng thật, nơi `TeachBackService` luôn dựng
+history có tin nhắn người học, đầu ra luôn là tiếng Việt.
+
+Bài học: lỗi nằm ở cách nhóm gọi hàm khi thử, không phải ở sản phẩm. Trước khi
+quy lỗi cho model, cần kiểm tra payload thực sự gửi đi.
 
 ## 4. Failure đau nhất chọn sửa
 

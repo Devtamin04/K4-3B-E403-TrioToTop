@@ -1,0 +1,101 @@
+id: automation_levels
+version: "1.0.0"
+title: Mức tự động hoá và ba cấp độ giải pháp
+opening_question: >-
+  Mình đang phân vân nên để AI tự làm tới đâu, và có nhất thiết bài nào cũng phải dùng AI không.
+  Bạn giải thích giúp mình nhé?
+completion_message: >-
+  Cảm ơn bạn. Giờ mình đã phân biệt được automation với augmentation, và biết khi nào chưa
+  cần tới AI.
+
+# Curated from local course transcript references T02-031..T02-038
+# và T05-060..T05-064.
+concepts:
+  - id: automation_vs_augmentation
+    required: true
+    priority: 10
+    description: >-
+      Automation là để máy làm thay, augmentation là AI hỗ trợ còn con người vẫn quyết định.
+    probe_question: >-
+      Khi đưa AI vào một công việc, có mấy hướng lựa chọn về vai trò của con người vậy bạn?
+    clarify_question: >-
+      Bạn nói "AI làm giúp"; làm giúp ở đây là làm thay hẳn hay chỉ hỗ trợ người dùng?
+
+  - id: automation_spectrum
+    required: true
+    priority: 20
+    description: >-
+      Giữa hai đầu đó là một dải liên tục với mức tự động tăng dần, không phải chọn một trong hai.
+    probe_question: >-
+      Một sản phẩm chỉ có thể chọn hoặc tự động hoàn toàn hoặc không, hay còn lựa chọn nào ở giữa?
+    clarify_question: >-
+      Ý bạn nói "tuỳ mức độ"; các mức đó xếp thành dạng gì?
+
+  - id: cost_of_error
+    required: true
+    priority: 30
+    description: >-
+      Càng trao nhiều quyền cho AI thì càng phải chấp nhận rủi ro, nên mức tự động phải chọn
+      theo mức thiệt hại khi sai.
+    probe_question: >-
+      Dựa vào đâu để quyết định nên cho AI tự quyết nhiều hay ít trong một tác vụ?
+    clarify_question: >-
+      Bạn nói phải "cân nhắc"; cân nhắc dựa trên yếu tố nào là chính?
+
+  - id: rule_workflow_agent
+    required: true
+    priority: 40
+    description: >-
+      Ba cấp độ kỹ thuật tăng dần: quy tắc cứng, workflow có LLM ở từng bước, rồi agent tự
+      quyết định.
+    probe_question: >-
+      Về mặt kỹ thuật, một giải pháp có thể xây ở những cấp độ nào, từ đơn giản tới phức tạp?
+    clarify_question: >-
+      Bạn nhắc tới "nhiều cấp độ"; kể cụ thể giúp mình các cấp đó với?
+
+  - id: start_simple
+    required: true
+    priority: 50
+    description: >-
+      Nên bắt đầu từ cấp đơn giản nhất giải quyết được vấn đề, vì càng phức tạp càng khó triển
+      khai và khó sửa khi lỗi.
+    probe_question: >-
+      Khi một bài toán có thể giải bằng nhiều cấp độ, nên chọn cấp nào trước và vì sao?
+    clarify_question: >-
+      Bạn nói "đừng làm phức tạp quá"; lợi ích cụ thể của việc bắt đầu đơn giản là gì?
+
+misconceptions:
+  - id: M01
+    concept_id: rule_workflow_agent
+    priority: 10
+    incorrect_claim: >-
+      Bài toán nào cũng nên dùng AI vì AI luôn cho kết quả tốt hơn code thường.
+    correction: >-
+      Việc nào viết được thành quy tắc rõ ràng thì code thường chạy nhanh hơn, rẻ hơn và chắc
+      chắn hơn; không cần AI.
+    challenge_question: >-
+      Nếu bài nào cũng nên dùng AI, thì với một quy tắc tính toán chỉ vài dòng điều kiện, dùng
+      AI mang lại thêm điều gì so với code thường?
+
+  - id: M02
+    concept_id: automation_vs_augmentation
+    priority: 20
+    incorrect_claim: >-
+      Tự động hoá hoàn toàn luôn là mục tiêu tốt nhất của mọi sản phẩm AI.
+    correction: >-
+      Mức tự động phải chọn theo mức thiệt hại khi AI sai; nhiều tác vụ cần con người giữ quyền
+      quyết định cuối.
+    challenge_question: >-
+      Nếu tự động hoàn toàn luôn tốt nhất, thì với một quyết định mà sai sẽ gây thiệt hại lớn,
+      bạn có để AI tự quyết mà không ai kiểm tra không?
+
+  - id: M03
+    concept_id: start_simple
+    priority: 30
+    incorrect_claim: >-
+      Cứ xây agent phức tạp ngay từ đầu để khỏi phải làm lại sau này.
+    correction: >-
+      Giải pháp phức tạp khó triển khai và khó khoanh vùng lỗi; nên bắt đầu từ mức đơn giản
+      nhất đủ giải quyết vấn đề.
+    challenge_question: >-
+      Nếu xây ngay hệ phức tạp, đến lúc nó trả ra kết quả sai thì bạn tìm chỗ hỏng bằng cách nào?

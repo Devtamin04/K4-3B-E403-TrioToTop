@@ -1,0 +1,91 @@
+id: problem_discovery
+version: "1.0.0"
+title: Xác định đúng bài toán trước khi làm
+opening_question: >-
+  Mình hay nhận được yêu cầu kiểu "làm cho tôi một con AI" mà chẳng biết bắt đầu từ đâu.
+  Bạn chỉ mình cách tìm ra vấn đề thật sự với nhé?
+completion_message: >-
+  Cảm ơn bạn. Giờ mình đã hiểu vì sao phải tìm đúng vấn đề trước, và cách mở rộng rồi thu hẹp
+  để làm việc đó.
+
+# Curated from local course transcript references T01-049..T01-053,
+# T01-060..T01-072. Giữ ở mức khái niệm mà buổi học trình bày.
+concepts:
+  - id: right_problem_first
+    required: true
+    priority: 10
+    description: >-
+      Giải đúng cách một vấn đề sai thì công sức bỏ ra không thu lại được gì, nên việc chọn
+      đúng vấn đề quan trọng hơn việc giải nhanh.
+    probe_question: >-
+      Giữa làm sai cách một vấn đề đúng và làm đúng cách một vấn đề sai, cái nào nguy hiểm hơn vậy bạn?
+    clarify_question: >-
+      Bạn nói phải "tìm đúng vấn đề"; nếu chọn sai vấn đề ngay từ đầu thì hậu quả là gì?
+
+  - id: diverge_converge
+    required: true
+    priority: 20
+    description: >-
+      Mỗi pha gồm hai bước ngược nhau: mở rộng để có nhiều khả năng, rồi hội tụ để chọn lấy một.
+    probe_question: >-
+      Trong quá trình tìm vấn đề, người ta làm gì trước khi chốt lại một hướng duy nhất?
+    clarify_question: >-
+      Chỗ bạn nói "khám phá rồi chọn", cụ thể là hai bước gì và theo thứ tự nào?
+
+  - id: double_diamond
+    required: true
+    priority: 30
+    description: >-
+      Quy trình gồm hai viên kim cương nối nhau: viên đầu tìm đúng vấn đề, viên sau tìm đúng
+      giải pháp cho vấn đề đó.
+    probe_question: >-
+      Mô hình Double Diamond chia quá trình làm sản phẩm thành mấy phần, mỗi phần để làm gì?
+    clarify_question: >-
+      Bạn nhắc tới "hai viên kim cương"; mỗi viên phụ trách câu hỏi nào?
+
+  - id: tacit_knowledge
+    required: true
+    priority: 40
+    description: >-
+      Người trong nghề thường không nói ra được hết cách họ làm, nên yêu cầu ban đầu hiếm khi
+      là vấn đề thật; phải đào thêm mới thấy.
+    probe_question: >-
+      Vì sao yêu cầu mà khách hàng hay chuyên gia nói ra lúc đầu thường chưa phải vấn đề thật?
+    clarify_question: >-
+      Bạn nói "họ không nói hết"; phần không nói ra đó là loại thông tin gì?
+
+misconceptions:
+  - id: M01
+    concept_id: right_problem_first
+    priority: 10
+    incorrect_claim: >-
+      Chỉ cần làm thật nhanh và thật đúng kỹ thuật là dự án sẽ thành công.
+    correction: >-
+      Làm đúng kỹ thuật trên một vấn đề sai vẫn là công sức bỏ đi; chọn đúng vấn đề mới quyết
+      định dự án có giá trị hay không.
+    challenge_question: >-
+      Nếu chỉ cần làm nhanh và đúng kỹ thuật, thì một đội giải rất giỏi một bài toán mà không
+      ai cần sẽ thu được gì?
+
+  - id: M02
+    concept_id: diverge_converge
+    priority: 20
+    incorrect_claim: >-
+      Nên chốt ngay một ý tưởng ngay từ đầu để khỏi mất thời gian bàn bạc.
+    correction: >-
+      Cần mở rộng để có nhiều khả năng trước, rồi mới hội tụ; chốt ngay thường bỏ lỡ hướng tốt hơn.
+    challenge_question: >-
+      Nếu chốt ngay ý tưởng đầu tiên nghĩ ra, làm sao bạn biết được có hướng nào tốt hơn mà mình
+      chưa kịp nghĩ tới?
+
+  - id: M03
+    concept_id: tacit_knowledge
+    priority: 30
+    incorrect_claim: >-
+      Cứ hỏi khách hàng muốn gì rồi làm đúng y như vậy là đủ.
+    correction: >-
+      Người dùng thường mô tả giải pháp họ tưởng tượng chứ không phải vấn đề gốc, nên phải đào
+      sâu thêm mới tìm ra nhu cầu thật.
+    challenge_question: >-
+      Nếu chỉ cần làm đúng điều khách hàng nói, thì vì sao nhiều sản phẩm làm đúng yêu cầu vẫn
+      không có ai dùng?

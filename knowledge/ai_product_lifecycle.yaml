@@ -1,0 +1,91 @@
+id: ai_product_lifecycle
+version: "1.0.0"
+title: Vòng đời sản phẩm AI và cách đo
+opening_question: >-
+  Mình có ý tưởng dùng AI rồi nhưng chưa rõ nên bắt tay vào đâu và làm sao biết nó chạy tốt.
+  Bạn giải thích quy trình cho mình nhé?
+completion_message: >-
+  Cảm ơn bạn. Giờ mình đã hiểu AI nên dùng ở đâu, vì sao cần baseline và vì sao phải đo
+  trước khi tin vào cảm giác.
+
+# Curated from local course transcript references T05-035..T05-040,
+# T05-048..T05-052, T05-088..T05-095.
+concepts:
+  - id: where_ai_adds_value
+    required: true
+    priority: 10
+    description: >-
+      AI tạo ra giá trị rõ nhất ở việc lặp đi lặp lại, khối lượng lớn, hoặc cần cá nhân hoá ở
+      quy mô mà người làm không xuể.
+    probe_question: >-
+      Những loại công việc nào thì đưa AI vào là hợp lý nhất vậy bạn?
+    clarify_question: >-
+      Bạn nói AI "giúp được nhiều"; giúp rõ nhất ở kiểu công việc nào?
+
+  - id: baseline_first
+    required: true
+    priority: 20
+    description: >-
+      Cần một mốc so sánh đơn giản trước, nếu không thì không biết phần AI thêm vào có thật sự
+      tốt hơn hay không.
+    probe_question: >-
+      Trước khi xây phần AI phức tạp, nên chuẩn bị mốc so sánh nào để biết mình có tiến bộ không?
+    clarify_question: >-
+      Bạn nói "so sánh"; so với cái gì mới biết giải pháp AI là tốt hơn?
+
+  - id: build_eval_loop
+    required: true
+    priority: 30
+    description: >-
+      Xây và đo là một vòng lặp: mỗi lần sửa phải chạy lại trọn bộ đánh giá vì sửa chỗ này có
+      thể làm vỡ chỗ khác.
+    probe_question: >-
+      Sau khi sửa prompt hoặc logic, cần làm gì trước khi kết luận là đã cải thiện?
+    clarify_question: >-
+      Bạn nói "chạy lại"; chạy lại phần vừa sửa hay chạy lại toàn bộ, và vì sao?
+
+  - id: measurable_metric
+    required: true
+    priority: 40
+    description: >-
+      Chất lượng phải quy về tiêu chí đo được, vì "trả lời hay" không kiểm chứng được giữa
+      những người đánh giá khác nhau.
+    probe_question: >-
+      Làm sao để đánh giá chất lượng đầu ra mà hai người chấm vẫn ra cùng kết luận?
+    clarify_question: >-
+      Bạn nói "đánh giá xem nó tốt không"; tốt ở đây đo bằng cách nào?
+
+misconceptions:
+  - id: M01
+    concept_id: measurable_metric
+    priority: 10
+    incorrect_claim: >-
+      Chỉ cần đọc vài câu trả lời thấy ổn là biết hệ thống chạy tốt.
+    correction: >-
+      Cảm giác khi đọc vài mẫu không thay được bộ đo có tiêu chí rõ ràng chạy trên nhiều case.
+    challenge_question: >-
+      Nếu đọc vài câu là đủ, thì hai người cùng đọc mà một người thấy đạt, một người thấy không
+      đạt, bạn tin ai?
+
+  - id: M02
+    concept_id: baseline_first
+    priority: 20
+    incorrect_claim: >-
+      Không cần mốc so sánh, cứ xây bản AI tốt nhất ngay từ đầu.
+    correction: >-
+      Không có baseline thì không chứng minh được phần AI thêm vào có đóng góp gì so với cách
+      làm đơn giản.
+    challenge_question: >-
+      Nếu không có mốc so sánh, làm sao bạn thuyết phục được sếp rằng phần AI đáng số tiền
+      bỏ ra?
+
+  - id: M03
+    concept_id: build_eval_loop
+    priority: 30
+    incorrect_claim: >-
+      Sửa xong một lỗi thì chỉ cần kiểm tra lại đúng case vừa sửa là đủ.
+    correction: >-
+      Một thay đổi có thể làm hỏng case khác đang chạy tốt, nên phải chạy lại trọn bộ.
+    challenge_question: >-
+      Nếu chỉ kiểm tra case vừa sửa, thì một thay đổi làm hỏng ba case khác sẽ được phát hiện
+      vào lúc nào?

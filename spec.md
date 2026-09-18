@@ -33,7 +33,7 @@ AI đánh giá lời giải thích, phát hiện chỗ thiếu hoặc sai, và h
 | **Hidden Evaluator** | **THẬT** | Gọi Ollama Cloud `gpt-oss:120b`, prompt `evaluator_v2`. Đây là lời gọi AI vào quyết định trung tâm. |
 | **AI Student** (sinh câu hỏi) | **THẬT** | Gọi cùng model, prompt `student_v1`. |
 | StateReducer + PolicyEngine | THẬT (deterministic) | Python thuần, không gọi LLM — cố ý, để quyết định luôn kiểm chứng được. |
-| Knowledge base | THẬT nhưng **thủ công** | 5 topic YAML nhóm tự curate từ transcript khoá học. Không có pipeline tự sinh. |
+| Knowledge base | THẬT nhưng **thủ công** | 8 topic YAML nhóm tự curate từ transcript khoá học (T01–T06). Không có pipeline tự sinh. |
 | Giao diện web | THẬT | HTML/CSS/JS thuần, gọi API thật. |
 | **Lưu trữ phiên** | **MOCK** | `InMemorySessionRepository` — lưu trong RAM, **tắt server là mất hết**. Chưa có database. |
 | **Tài khoản người dùng** | **MOCK** | Avatar và "Xin chào, Người dạy tuyệt vời" là tĩnh; không có đăng nhập, không phân biệt người dùng. |

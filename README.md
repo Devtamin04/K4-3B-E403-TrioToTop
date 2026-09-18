@@ -39,7 +39,7 @@ làm hai việc: đọc hiểu lời học viên, và diễn đạt câu hỏi.
 | `app/adapters/` | Evaluator và Student (bản LLM + bản cố định để test) |
 | `app/llm/` | Lớp gọi LLM, không phụ thuộc nhà cung cấp |
 | `app/api/`, `web/` | REST API và giao diện chat |
-| `knowledge/` | Chủ đề dạy học (YAML, nhóm tự curate) |
+| `knowledge/` | 8 chủ đề dạy học (YAML, curate từ transcript khoá) |
 | **`eval/`** | **Golden set + kết quả các lượt đo** (chỗ chấm R4) |
 | `eval_harness/` | Code chạy đo (đọc dữ liệu từ `eval/`) |
 | `tests/` | 99 unit + integration test |
