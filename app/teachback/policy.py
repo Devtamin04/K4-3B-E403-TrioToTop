@@ -7,7 +7,7 @@ from app.teachback.models import (
     TeachBackState,
     TopicDefinition,
 )
-from app.teachback.state import missing_concepts
+from app.teachback.state import BARREN_TURN_LIMIT, missing_concepts
 
 
 class PolicyEngine:
@@ -15,7 +15,38 @@ class PolicyEngine:
         if state.status is not SessionStatus.ACTIVE:
             raise ValueError("policy can only run for an active session")
 
-        misconception = self._first_misconception(topic, state.active_misconceptions)
+        if state.barren_turns >= BARREN_TURN_LIMIT:
+            return PolicyDecision(
+                action=Action.HALT,
+                target=None,
+                reason_code="learner_stopped_teaching",
+            )
+
+        # Bỏ qua mục tiêu đang bế tắc để đổi hướng thay vì hỏi lại y hệt.
+        stalled = state.stalled_targets
+        decision = self._next_target(topic, state, stalled)
+        if decision is not None:
+            return decision
+
+        # Mọi mục tiêu còn lại đều bế tắc: thử lại chúng một lượt cuối.
+        decision = self._next_target(topic, state, frozenset())
+        if decision is not None:
+            return PolicyDecision(
+                action=Action.HALT,
+                target=None,
+                reason_code="all_targets_stalled",
+            )
+
+        return PolicyDecision(
+            action=Action.FINISH,
+            target=None,
+            reason_code="all_requirements_satisfied",
+        )
+
+    def _next_target(
+        self, topic: TopicDefinition, state: TeachBackState, skip: frozenset[str]
+    ) -> PolicyDecision | None:
+        misconception = self._first_misconception(topic, state.active_misconceptions - skip)
         if misconception is not None:
             return PolicyDecision(
                 action=Action.CHALLENGE,
@@ -24,7 +55,7 @@ class PolicyEngine:
             )
 
         required_unclear = state.unclear_concepts & topic.required_concept_ids
-        concept = self._first_concept(topic, required_unclear)
+        concept = self._first_concept(topic, required_unclear - skip)
         if concept is not None:
             return PolicyDecision(
                 action=Action.CLARIFY,
@@ -32,19 +63,14 @@ class PolicyEngine:
                 reason_code="unclear_required_concept",
             )
 
-        concept = self._first_concept(topic, missing_concepts(topic, state))
+        concept = self._first_concept(topic, missing_concepts(topic, state) - skip)
         if concept is not None:
             return PolicyDecision(
                 action=Action.PROBE,
                 target=Target(kind=TargetKind.CONCEPT, id=concept),
                 reason_code="missing_required_concept",
             )
-
-        return PolicyDecision(
-            action=Action.FINISH,
-            target=None,
-            reason_code="all_requirements_satisfied",
-        )
+        return None
 
     @staticmethod
     def _first_concept(topic: TopicDefinition, candidates: frozenset[str]) -> str | None:

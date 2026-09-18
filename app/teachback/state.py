@@ -8,6 +8,12 @@ from app.teachback.models import (
     TopicDefinition,
 )
 
+STALL_THRESHOLD = 3
+"""Số lần hỏi lại cùng một mục tiêu không tiến triển trước khi coi là bế tắc."""
+
+BARREN_TURN_LIMIT = 3
+"""Số lượt liên tiếp không có bằng chứng trước khi coi là người học đã ngừng dạy."""
+
 
 def missing_concepts(topic: TopicDefinition, state: TeachBackState) -> frozenset[str]:
     return topic.required_concept_ids - state.covered_concepts
@@ -58,6 +64,13 @@ class StateReducer:
                 if evidence.concept_id not in detected_concepts:
                     unclear.add(evidence.concept_id)
 
+        made_progress = bool(
+            covered != set(state.covered_concepts)
+            or unclear != set(state.unclear_concepts)
+            or active_misconceptions != set(state.active_misconceptions)
+        )
+        attempts, stalled = self._track_target_attempts(state, made_progress)
+
         return state.model_copy(
             update={
                 "covered_concepts": frozenset(covered),
@@ -65,8 +78,34 @@ class StateReducer:
                 "active_misconceptions": frozenset(active_misconceptions),
                 "evidence": (*state.evidence, *result.evidence),
                 "turn_count": expected_turn,
+                "attempts_per_target": attempts,
+                "stalled_targets": stalled,
+                "barren_turns": 0 if result.evidence else state.barren_turns + 1,
             }
         )
+
+    @staticmethod
+    def _track_target_attempts(
+        state: TeachBackState, made_progress: bool
+    ) -> tuple[dict[str, int], frozenset[str]]:
+        """Đếm số lần hỏi lại cùng một mục tiêu mà trạng thái không đổi.
+
+        Tiến triển làm bộ đếm về 0, nên chỉ những lần lặp thật sự vô ích mới
+        tích lũy và khiến mục tiêu bị đánh dấu bế tắc.
+        """
+
+        attempts = dict(state.attempts_per_target)
+        target = state.current_target
+        if target is None:
+            return attempts, state.stalled_targets
+        if made_progress:
+            attempts.pop(target.id, None)
+            return attempts, state.stalled_targets - {target.id}
+
+        attempts[target.id] = attempts.get(target.id, 0) + 1
+        if attempts[target.id] >= STALL_THRESHOLD:
+            return attempts, state.stalled_targets | {target.id}
+        return attempts, state.stalled_targets
 
     def _validate(
         self,

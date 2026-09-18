@@ -87,7 +87,7 @@ class StudentOutputValidator:
             raise StudentResponseRejected("the student reply is too long")
         if reply.count("?") > 1:
             raise StudentResponseRejected("the student reply must ask at most one question")
-        if decision.action is not Action.FINISH and "?" not in reply:
+        if decision.action not in {Action.FINISH, Action.HALT} and "?" not in reply:
             raise StudentResponseRejected("the student reply must ask its question")
 
         for pattern in _LEAKAGE_PATTERNS:
@@ -155,7 +155,7 @@ class LlmStudentGenerator:
         decision: PolicyDecision,
         history: Sequence[Message],
     ) -> str:
-        if decision.action is Action.FINISH:
+        if decision.action in {Action.FINISH, Action.HALT}:
             return self._fallback.generate(topic, state, decision, history)
 
         user_input = self._build_input(topic, decision, history)

@@ -15,6 +15,8 @@ class Action(StrEnum):
     CLARIFY = "CLARIFY"
     PROBE = "PROBE"
     FINISH = "FINISH"
+    HALT = "HALT"
+    """Dừng khi không còn tiến triển. Không phải FINISH: người học chưa hiểu hết."""
 
 
 class Judgment(StrEnum):
@@ -27,6 +29,8 @@ class SessionStatus(StrEnum):
     ACTIVE = "active"
     COMPLETED = "completed"
     STOPPED = "stopped"
+    EXHAUSTED = "exhausted"
+    """Phiên dừng khi chưa hiểu hết; khác hẳn COMPLETED và không được lẫn với nó."""
 
 
 class MessageRole(StrEnum):
@@ -104,6 +108,13 @@ class TopicDefinition(DomainModel):
     title: str = Field(min_length=1)
     opening_question: str = Field(min_length=1)
     completion_message: str = Field(min_length=1)
+    halt_message: str = Field(
+        default=(
+            "Mình cảm ơn bạn đã cố gắng giải thích. Phần này có vẻ còn khó, "
+            "mình tạm dừng ở đây nhé — bạn xem lại tài liệu rồi quay lại dạy mình tiếp nha!"
+        ),
+        min_length=1,
+    )
     concepts: list[ConceptDefinition] = Field(min_length=1)
     misconceptions: list[MisconceptionDefinition] = Field(default_factory=list)
 
@@ -185,6 +196,9 @@ class EvaluationResult(DomainModel):
         return self
 
 
+_TERMINAL_ACTIONS = frozenset({Action.FINISH, Action.HALT})
+
+
 class Target(DomainModel):
     kind: TargetKind
     id: str = Field(min_length=1)
@@ -197,9 +211,10 @@ class PolicyDecision(DomainModel):
 
     @model_validator(mode="after")
     def validate_target(self) -> PolicyDecision:
-        if self.action is Action.FINISH and self.target is not None:
-            raise ValueError("FINISH must not have a target")
-        if self.action is not Action.FINISH and self.target is None:
+        if self.action in _TERMINAL_ACTIONS:
+            if self.target is not None:
+                raise ValueError(f"{self.action} must not have a target")
+        elif self.target is None:
             raise ValueError(f"{self.action} requires a target")
         return self
 
@@ -216,6 +231,11 @@ class TeachBackState(DomainModel):
     next_action: Action | None = None
     turn_count: int = Field(default=0, ge=0)
     status: SessionStatus = SessionStatus.ACTIVE
+    stalled_targets: frozenset[str] = Field(default_factory=frozenset)
+    """Mục tiêu đã hỏi nhiều lần không tiến triển; policy sẽ chuyển sang mục tiêu khác."""
+    attempts_per_target: dict[str, int] = Field(default_factory=dict)
+    barren_turns: int = Field(default=0, ge=0)
+    """Số lượt liên tiếp không sinh ra bằng chứng nào — dấu hiệu người học đã ngừng dạy."""
 
 
 class Message(DomainModel):

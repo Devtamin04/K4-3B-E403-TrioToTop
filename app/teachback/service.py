@@ -91,9 +91,12 @@ class TeachBackService:
             (*session.messages, user_message),
         )
 
-        status = (
-            SessionStatus.COMPLETED if decision.action is Action.FINISH else SessionStatus.ACTIVE
-        )
+        if decision.action is Action.FINISH:
+            status = SessionStatus.COMPLETED
+        elif decision.action is Action.HALT:
+            status = SessionStatus.EXHAUSTED
+        else:
+            status = SessionStatus.ACTIVE
         next_state = reduced_state.model_copy(
             update={
                 "current_target": decision.target,

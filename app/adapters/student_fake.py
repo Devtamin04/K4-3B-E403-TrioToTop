@@ -25,6 +25,8 @@ class DeterministicStudentGenerator:
         del state, history
         if decision.action is Action.FINISH:
             return topic.completion_message
+        if decision.action is Action.HALT:
+            return topic.halt_message
         if decision.target is None:  # Protected by PolicyDecision validation.
             raise ValueError("non-FINISH decision requires a target")
         if decision.action is Action.CHALLENGE:
