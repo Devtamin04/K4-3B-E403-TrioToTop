@@ -1,0 +1,117 @@
+id: llm_text_generation
+version: "1.0.0"
+title: How an LLM Generates Text
+opening_question: >-
+  Mình vẫn chưa hình dung LLM tạo ra một câu trả lời như thế nào. Bạn thử giải thích
+  cho mình từ lúc nhận văn bản đầu vào nhé?
+completion_message: >-
+  Cảm ơn bạn. Giờ mình đã hiểu các bước chính LLM dùng để sinh văn bản và cả giới hạn
+  của quá trình đó.
+
+# Curated from local course transcript references T04-047..T04-053 and
+# T06-126..T06-140. The definitions below intentionally avoid claims in the
+# transcript that are too implementation-specific or technically ambiguous.
+concepts:
+  - id: tokenization
+    required: true
+    priority: 10
+    description: >-
+      Input text is split into tokens, the model's basic text units; a token is not
+      guaranteed to be exactly one word or one character.
+    probe_question: >-
+      Trước khi tính toán, LLM biểu diễn câu chữ đầu vào thành những đơn vị gì vậy?
+    clarify_question: >-
+      Bạn nói mô hình đọc “từng từ”; vậy đơn vị mô hình xử lý có luôn trùng với một từ không?
+
+  - id: next_token_prediction
+    required: true
+    priority: 20
+    description: >-
+      Given the available context, the language model estimates a probability
+      distribution over possible next tokens and selects or samples one.
+    probe_question: >-
+      Từ các token đang có, mô hình quyết định phần tiếp theo của câu bằng cách nào?
+    clarify_question: >-
+      Chỗ bạn nói mô hình “đoán”, bạn có thể nói rõ nó đang đoán đối tượng nào không?
+
+  - id: autoregressive_generation
+    required: true
+    priority: 30
+    description: >-
+      A generated token is appended to the sequence and becomes part of the context
+      used to predict the following token; this repeats until generation stops.
+    probe_question: >-
+      Sau khi sinh được một token, mô hình làm gì để tiếp tục tạo cả câu dài?
+    clarify_question: >-
+      Token vừa sinh ra có được dùng lại khi mô hình tạo token kế tiếp không?
+
+  - id: context_window
+    required: true
+    priority: 40
+    description: >-
+      The model conditions generation on the information available in its bounded
+      context window; relevant instructions, conversation, and text must fit within it.
+    probe_question: >-
+      Khi đoán token tiếp theo, mô hình dựa vào phần thông tin nào đã có trước đó?
+    clarify_question: >-
+      “Ngữ cảnh” ở đây gồm những gì và nó có giới hạn hay không?
+
+  - id: factual_fallibility
+    required: true
+    priority: 50
+    description: >-
+      Producing a probable, fluent continuation does not guarantee factual truth, so
+      an LLM can generate plausible but incorrect information.
+    probe_question: >-
+      Nếu câu trả lời nghe rất trôi chảy thì có chắc thông tin bên trong luôn đúng không?
+    clarify_question: >-
+      Bạn có thể phân biệt việc câu văn hợp lý với việc nội dung đúng sự thật không?
+
+misconceptions:
+  - id: M01
+    concept_id: next_token_prediction
+    priority: 10
+    incorrect_claim: >-
+      An LLM retrieves a complete prewritten answer from a database instead of
+      generating tokens from context.
+    correction: >-
+      The model generates a response by repeatedly predicting tokens conditioned on
+      the available context.
+    challenge_question: >-
+      Nếu câu trả lời chỉ được lấy nguyên từ một kho có sẵn, mô hình tạo được câu mới chưa từng
+      được lưu trước đó bằng cách nào?
+
+  - id: M02
+    concept_id: tokenization
+    priority: 20
+    incorrect_claim: >-
+      Every token is always exactly one complete word.
+    correction: >-
+      A token may be a word, part of a word, punctuation, or another text unit depending
+      on the tokenizer.
+    challenge_question: >-
+      Nếu một token luôn bằng đúng một từ, những từ hiếm, dấu câu hoặc một phần của từ sẽ được
+      mô hình biểu diễn thế nào?
+
+  - id: M03
+    concept_id: context_window
+    priority: 30
+    incorrect_claim: >-
+      An LLM can always remember and use an unlimited amount of prior conversation.
+    correction: >-
+      Generation is bounded by a context window, and not all earlier information can
+      remain available indefinitely.
+    challenge_question: >-
+      Nếu mô hình nhớ vô hạn, tại sao các hệ thống lại phải giới hạn hoặc tóm tắt lịch sử hội thoại?
+
+  - id: M04
+    concept_id: factual_fallibility
+    priority: 40
+    incorrect_claim: >-
+      A fluent and confident LLM response is guaranteed to be factually correct.
+    correction: >-
+      Fluency reflects plausible token generation and does not guarantee factual
+      correctness.
+    challenge_question: >-
+      Một câu có thể rất tự nhiên về ngôn ngữ nhưng chứa một con số bịa đặt không; nếu có thì độ
+      trôi chảy chứng minh được điều gì về tính đúng sai?

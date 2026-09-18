@@ -20,6 +20,7 @@ class EvaluatorSettings:
     max_attempts: int
     timeout_seconds: float
     fixture_path: Path | None
+    prompt_version: Literal["evaluator_v1", "evaluator_v2"] = "evaluator_v2"
 
     @classmethod
     def from_env(cls) -> EvaluatorSettings:
@@ -40,6 +41,15 @@ class EvaluatorSettings:
             backend = cast(Literal["ollama", "openai", "fixture"], raw_provider)
         max_attempts = _positive_int("EVALUATOR_MAX_ATTEMPTS", default=2)
         timeout_seconds = _positive_float("EVALUATOR_TIMEOUT_SECONDS", default=30)
+        raw_prompt_version = os.getenv("EVALUATOR_PROMPT_VERSION", "evaluator_v2").strip()
+        if raw_prompt_version not in {"evaluator_v1", "evaluator_v2"}:
+            raise ConfigurationError(
+                "EVALUATOR_PROMPT_VERSION must be 'evaluator_v1' or 'evaluator_v2'"
+            )
+        prompt_version = cast(
+            Literal["evaluator_v1", "evaluator_v2"],
+            raw_prompt_version,
+        )
 
         if backend == "ollama":
             api_key = _required("OLLAMA_API_KEY")
@@ -71,6 +81,29 @@ class EvaluatorSettings:
             max_attempts=max_attempts,
             timeout_seconds=timeout_seconds,
             fixture_path=fixture_path,
+            prompt_version=prompt_version,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class StudentSettings:
+    backend: Literal["deterministic", "llm"]
+    model: str | None
+    max_attempts: int
+    timeout_seconds: float
+
+    @classmethod
+    def from_env(cls) -> StudentSettings:
+        raw_backend = os.getenv("STUDENT_BACKEND", "deterministic").strip() or "deterministic"
+        if raw_backend not in {"deterministic", "llm"}:
+            raise ConfigurationError("STUDENT_BACKEND must be 'deterministic' or 'llm'")
+        backend = cast(Literal["deterministic", "llm"], raw_backend)
+        model = _required("STUDENT_MODEL") if backend == "llm" else None
+        return cls(
+            backend=backend,
+            model=model,
+            max_attempts=_positive_int("STUDENT_MAX_ATTEMPTS", default=2),
+            timeout_seconds=_positive_float("STUDENT_TIMEOUT_SECONDS", default=30),
         )
 
 

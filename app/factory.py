@@ -14,7 +14,7 @@ from app.teachback.exceptions import (
     NotFoundError,
     SessionNotActiveError,
 )
-from app.teachback.interfaces import Evaluator
+from app.teachback.interfaces import Evaluator, StudentGenerator
 from app.teachback.service import TeachBackService
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -23,6 +23,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 def create_app(
     *,
     evaluator: Evaluator,
+    student: StudentGenerator | None = None,
     topic_directory: Path | None = None,
 ) -> FastAPI:
     topics = YamlTopicRepository(topic_directory or PROJECT_ROOT / "knowledge")
@@ -31,7 +32,7 @@ def create_app(
         topics=topics,
         sessions=sessions,
         evaluator=evaluator,
-        student=DeterministicStudentGenerator(),
+        student=student or DeterministicStudentGenerator(),
     )
 
     application = FastAPI(title="Teach-Back AI", version="0.2.0")
