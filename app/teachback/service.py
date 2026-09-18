@@ -13,6 +13,7 @@ from app.teachback.models import (
     SessionStatus,
     TeachBackSession,
     TeachBackState,
+    TopicDefinition,
     TurnRecord,
 )
 from app.teachback.policy import PolicyEngine
@@ -38,6 +39,9 @@ class TeachBackService:
         self._policy = PolicyEngine()
         self._id_factory = id_factory or (lambda: str(uuid4()))
         self._clock = clock or (lambda: datetime.now(UTC))
+
+    def list_topics(self) -> list[TopicDefinition]:
+        return self._topics.list_topics()
 
     def start_session(self, topic_id: str) -> TeachBackSession:
         topic = self._topics.get(topic_id)

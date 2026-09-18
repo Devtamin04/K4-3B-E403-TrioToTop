@@ -1,11 +1,15 @@
 from fastapi import APIRouter
 
-from app.api.schemas import SessionResponse, SubmitMessageRequest
+from app.api.schemas import SessionResponse, SubmitMessageRequest, TopicSummary
 from app.teachback.service import TeachBackService
 
 
 def create_router(service: TeachBackService) -> APIRouter:
     router = APIRouter()
+
+    @router.get("/topics", response_model=list[TopicSummary])
+    async def list_topics() -> list[TopicSummary]:
+        return [TopicSummary.from_domain(topic) for topic in service.list_topics()]
 
     @router.post(
         "/topics/{topic_id}/sessions",

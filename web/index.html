@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeachBack — Dạy lại cho AI</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ========== nền phong cảnh ========== -->
+<div class="scenery" aria-hidden="true">
+  <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#cfe2ff"/><stop offset="45%" stop-color="#dcd8fb"/>
+        <stop offset="100%" stop-color="#c7e9ff"/>
+      </linearGradient>
+      <linearGradient id="mtFar" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#b9cdf2"/><stop offset="100%" stop-color="#cfddf8"/>
+      </linearGradient>
+      <linearGradient id="mtNear" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#93b8e8"/><stop offset="100%" stop-color="#b6d2f2"/>
+      </linearGradient>
+      <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#9fd8c2"/><stop offset="100%" stop-color="#cdeadd"/>
+      </linearGradient>
+    </defs>
+    <rect width="1600" height="900" fill="url(#sky)"/>
+    <circle cx="1310" cy="140" r="58" fill="#fff" opacity=".55"/>
+    <g opacity=".5" fill="#fff">
+      <ellipse cx="240" cy="150" rx="78" ry="26"/><ellipse cx="300" cy="138" rx="56" ry="21"/>
+      <ellipse cx="1050" cy="96" rx="66" ry="23"/><ellipse cx="1110" cy="107" rx="46" ry="17"/>
+    </g>
+    <path d="M0 520 L150 300 L268 420 L395 238 L560 520 Z" fill="url(#mtFar)"/>
+    <path d="M300 520 L450 268 L555 372 L690 200 L900 520 Z" fill="url(#mtFar)" opacity=".8"/>
+    <path d="M1060 520 L1220 262 L1330 384 L1455 240 L1600 520 Z" fill="url(#mtFar)"/>
+    <path d="M0 600 L185 360 L340 540 L480 400 L660 600 Z" fill="url(#mtNear)"/>
+    <path d="M1150 600 L1320 350 L1470 520 L1600 390 L1600 600 Z" fill="url(#mtNear)"/>
+    <path d="M395 238 L435 288 L398 302 L362 284 Z M690 200 L732 254 L694 268 L656 249 Z
+             M1455 240 L1497 294 L1459 308 L1421 289 Z
+             M185 360 L218 402 L187 414 L157 398 Z M1320 350 L1353 392 L1322 404 L1292 388 Z"
+          fill="#fff" opacity=".8"/>
+    <path d="M0 592 Q400 528 800 572 T1600 556 L1600 900 L0 900 Z" fill="url(#grass)"/>
+    <g fill="#7cc3a6" opacity=".7">
+      <path d="M86 596 l30 -74 30 74 z"/><path d="M92 628 l25 -62 25 62 z"/>
+      <path d="M168 606 l23 -56 23 56 z"/><path d="M240 616 l20 -48 20 48 z"/>
+      <path d="M1400 604 l24 -60 24 60 z"/><path d="M1470 596 l28 -70 28 70 z"/>
+      <path d="M1540 614 l21 -52 21 52 z"/>
+    </g>
+    <g fill="#6bb897" opacity=".55">
+      <path d="M118 640 l22 -54 22 54 z"/><path d="M1436 646 l20 -50 20 50 z"/>
+    </g>
+  </svg>
+</div>
+
+<div class="app">
+
+  <!-- ========== sidebar ========== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <rect x="4" y="9" width="24" height="17" rx="6" fill="#fff"/>
+          <path d="M11 27.5 13.5 24h5L16 29z" fill="#fff"/>
+          <circle cx="12" cy="17" r="2.1" fill="#3f7dfb"/><circle cx="20" cy="17" r="2.1" fill="#7a5cf0"/>
+          <path d="M3 7.5 16 2l13 5.5-13 5.5z" fill="#1f2d52"/>
+          <path d="M26 9.4v4.3" stroke="#1f2d52" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>TeachBack</h1>
+        <p>Dạy lại cho AI</p>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item is-active" href="#" aria-current="page">
+        <span class="ni-icon home"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11.2 12 5l8 6.2V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1v-7.8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
+        Trang chủ
+      </a>
+      <button class="nav-item" disabled title="Sắp có">
+        <span class="ni-icon clock"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/><path d="M12 8v4.3l2.7 1.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+        Lịch sử học
+      </button>
+      <button class="nav-item" disabled title="Sắp có">
+        <span class="ni-icon book"><svg viewBox="0 0 24 24" fill="none"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H11v16H6.5A1.5 1.5 0 0 1 5 18.5v-13ZM19 5.5A1.5 1.5 0 0 0 17.5 4H13v16h4.5a1.5 1.5 0 0 0 1.5-1.5v-13Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
+        Thư viện chủ đề
+      </button>
+      <button class="nav-item" disabled title="Sắp có">
+        <span class="ni-icon gear"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.1" stroke="currentColor" stroke-width="2"/><path d="m19.4 14-.6 1.1.9 1.7-1.9 1.9-1.7-.9-1.1.6-.6 1.8h-2.8l-.6-1.8-1.1-.6-1.7.9-1.9-1.9.9-1.7-.6-1.1-1.8-.6v-2.8l1.8-.6.6-1.1-.9-1.7 1.9-1.9 1.7.9 1.1-.6.6-1.8h2.8l.6 1.8 1.1.6 1.7-.9 1.9 1.9-.9 1.7.6 1.1 1.8.6v2.8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+        Cài đặt
+      </button>
+    </nav>
+
+    <div class="topics">
+      <div class="topics-head">
+        <span>Chủ đề</span>
+        <button class="icon-btn" disabled title="Sắp có">+</button>
+      </div>
+      <ul id="topic-list" class="topic-list">
+        <li class="topic-skeleton">Đang tải…</li>
+      </ul>
+    </div>
+
+    <div class="status-card">
+      <div class="status-line"><span class="dot is-idle" id="status-dot"></span><b id="status-text">Trạng thái: Sẵn sàng</b></div>
+      <p>Cùng nhau khám phá, bạn dạy<br>AI tiến bộ mỗi ngày!</p>
+      <button id="new-session" class="primary-btn"><span>+</span> Bắt đầu phiên mới</button>
+    </div>
+
+    <p class="handwrite side-note">Tri thức<br>đẹp hơn<br>khi được chia sẻ 💙</p>
+  </aside>
+
+  <!-- ========== khung chat ========== -->
+  <main class="main">
+    <header class="chat-head">
+      <div class="chat-title">
+        <div class="topic-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="7" cy="6.5" r="2.5" stroke="currentColor" stroke-width="1.9"/><circle cx="7" cy="17.5" r="2.5" stroke="currentColor" stroke-width="1.9"/><circle cx="17.5" cy="12" r="2.5" stroke="currentColor" stroke-width="1.9"/><path d="M9.3 7.8 15.2 10.8M9.3 16.2 15.2 13.2" stroke="currentColor" stroke-width="1.9"/></svg>
+        </div>
+        <div class="chat-title-text">
+          <h2 id="topic-title">Chọn một chủ đề để bắt đầu</h2>
+          <p id="topic-sub">Bạn sẽ là người dạy, AI sẽ là học trò đặt câu hỏi ngược lại.</p>
+        </div>
+      </div>
+      <div class="chat-head-right">
+        <span class="pill is-idle" id="session-pill"><i></i>Chưa có phiên</span>
+        <div class="role-note">
+          <span class="role-cap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M2 8.5 12 4l10 4.5-10 4.5z" fill="currentColor"/><path d="M6 11v4.2c0 1.5 2.7 2.8 6 2.8s6-1.3 6-2.8V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <div>
+            <b>AI đang đóng vai học sinh</b>
+            <span>Hãy giải thích, đặt ví dụ, và dạy AI nhé!</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="messages" class="messages">
+      <div class="empty-state">
+        <div class="empty-art" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none">
+            <ellipse cx="60" cy="108" rx="34" ry="6" fill="#c9d8f5" opacity=".55"/>
+            <rect x="26" y="34" width="68" height="54" rx="20" fill="#dbe7ff" stroke="#9fc0f5" stroke-width="2.5"/>
+            <circle cx="47" cy="58" r="6.5" fill="#3f7dfb"/><circle cx="73" cy="58" r="6.5" fill="#7a5cf0"/>
+            <circle cx="49" cy="55.5" r="2.2" fill="#fff"/><circle cx="75" cy="55.5" r="2.2" fill="#fff"/>
+            <path d="M52 72q8 6 16 0" stroke="#5b7cc0" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M60 34V24" stroke="#9fc0f5" stroke-width="2.5" stroke-linecap="round"/><circle cx="60" cy="21" r="4" fill="#7a5cf0"/>
+            <rect x="14" y="52" width="9" height="18" rx="4.5" fill="#bcd3f8"/><rect x="97" y="52" width="9" height="18" rx="4.5" fill="#bcd3f8"/>
+          </svg>
+        </div>
+        <h3>Chào bạn! 👋</h3>
+        <p>Chọn một chủ đề ở thanh bên trái, rồi bấm <b>Bắt đầu phiên mới</b>.<br>
+           Hãy giải thích bằng chính ngôn ngữ của bạn — AI sẽ hỏi lại chỗ chưa rõ.</p>
+      </div>
+    </div>
+
+    <form id="composer" class="composer">
+      <div class="composer-box">
+        <span class="clip" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M20 11.5 12.4 19a5 5 0 0 1-7-7l7.6-7.6a3.3 3.3 0 0 1 4.7 4.7l-7.5 7.5a1.6 1.6 0 0 1-2.3-2.3l6.9-6.9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <textarea id="input" rows="1" placeholder="Giải thích cho AI..." disabled></textarea>
+        <button id="send" class="send-btn" type="submit" disabled>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12 20 4.8l-4 15.4-4.2-5.8L4.5 12Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+          Gửi
+        </button>
+      </div>
+      <div class="composer-foot">
+        <span>Nhấn Enter để gửi · Shift+Enter xuống dòng</span>
+      </div>
+    </form>
+  </main>
+
+  <!-- ========== panel phải ========== -->
+  <aside class="panel">
+    <header class="user-bar">
+      <button class="bell" disabled title="Sắp có">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6.5 10a5.5 5.5 0 0 1 11 0c0 3.3.9 4.8 1.6 5.6.4.5 0 1.2-.6 1.2H5.5c-.7 0-1-.7-.6-1.2.7-.8 1.6-2.3 1.6-5.6Z" stroke="currentColor" stroke-width="1.8"/><path d="M10 19.5a2.2 2.2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <i class="badge"></i>
+      </button>
+      <div class="user">
+        <span class="user-avatar" aria-hidden="true">
+          <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#dceaff"/><circle cx="20" cy="16" r="7" fill="#f6c8a0"/><path d="M12.5 13.5q7.5-6 15 0-1.5-6.5-7.5-6.5t-7.5 6.5Z" fill="#4a3728"/><path d="M6 36q3-9 14-9t14 9Z" fill="#6ea8f0"/></svg>
+        </span>
+        <div class="user-text">
+          <span>Xin chào,</span>
+          <b>Người dạy tuyệt vời! 👋</b>
+        </div>
+      </div>
+    </header>
+
+    <div class="panel-card">
+      <div class="panel-head">
+        <span class="panel-icon">📊</span>
+        <h3>Hành trình hôm nay</h3>
+      </div>
+      <div class="goal">
+        <span class="goal-icon">🎯</span>
+        <div>
+          <b>Mục tiêu: Dạy AI hiểu chủ đề</b>
+          <p>Giải thích bằng chính ngôn ngữ của bạn, AI sẽ đặt câu hỏi và cùng học với bạn!</p>
+        </div>
+      </div>
+
+      <div class="progress-head">
+        <span>Số lượt đã trao đổi</span>
+        <b><span id="turn-count">0</span></b>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <ul class="steps">
+        <li id="step-start"><span class="tick"></span>Bắt đầu phiên</li>
+        <li id="step-explain"><span class="tick"></span>Giải thích lần đầu</li>
+        <li id="step-deep"><span class="tick"></span>Trả lời câu hỏi của AI</li>
+        <li id="step-refine"><span class="tick"></span>Làm rõ chỗ còn thiếu</li>
+        <li id="step-done"><span class="tick"></span>AI đã hiểu chủ đề</li>
+      </ul>
+    </div>
+
+    <div class="mascot">
+      <p class="handwrite mascot-bubble">Dạy hôm nay,<br>AI thông minh hơn<br>ngày mai! 🚀</p>
+      <div class="mascot-art-slot">
+      <svg class="mascot-art" viewBox="0 0 230 200" fill="none" aria-hidden="true">
+        <ellipse cx="128" cy="184" rx="66" ry="9" fill="#b9cdf0" opacity=".45"/>
+        <g>
+          <rect x="14" y="128" width="92" height="17" rx="5" fill="#f6b3c0" stroke="#e58fa3" stroke-width="1.5"/>
+          <text x="60" y="140" font-size="9" font-weight="600" fill="#8c3d52" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif">Better</text>
+          <rect x="18" y="145" width="92" height="17" rx="5" fill="#b3cdf8" stroke="#8fb2ea" stroke-width="1.5"/>
+          <text x="64" y="157" font-size="9" font-weight="600" fill="#2f4d86" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif">Explainers</text>
+          <rect x="14" y="162" width="96" height="17" rx="5" fill="#f8cfa0" stroke="#e5ad74" stroke-width="1.5"/>
+          <text x="62" y="174" font-size="8.2" font-weight="600" fill="#8a5220" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif">A Brighter AI</text>
+        </g>
+        <rect x="88" y="64" width="98" height="82" rx="30" fill="#e6f0ff" stroke="#8fb6f0" stroke-width="3.4"/>
+        <circle cx="117" cy="100" r="11" fill="#2f6df0"/><circle cx="157" cy="100" r="11" fill="#6f52ea"/>
+        <circle cx="120.5" cy="95.5" r="3.9" fill="#fff"/><circle cx="160.5" cy="95.5" r="3.9" fill="#fff"/>
+        <circle cx="99" cy="116" r="6" fill="#f9b8c8" opacity=".75"/>
+        <circle cx="175" cy="116" r="6" fill="#f9b8c8" opacity=".75"/>
+        <path d="M124 122q13 11 26 0" stroke="#4f74bb" stroke-width="3.8" stroke-linecap="round"/>
+        <rect x="68" y="88" width="17" height="32" rx="8.5" fill="#bcd4f8"/>
+        <rect x="189" y="88" width="17" height="32" rx="8.5" fill="#bcd4f8"/>
+        <path d="M86 64 137 42l52 22-52 21z" fill="#22325c"/>
+        <path d="M137 33v9" stroke="#22325c" stroke-width="3"/>
+        <path d="M184 58v20" stroke="#22325c" stroke-width="3.2" stroke-linecap="round"/>
+        <circle cx="184" cy="81" r="4.4" fill="#f5c451"/>
+        <path d="M150 142h42a5 5 0 0 1 5 5v26h-52v-26a5 5 0 0 1 5-5Z" fill="#fff" stroke="#8fb6f0" stroke-width="2.6"/>
+        <path d="M171 146v27" stroke="#8fb6f0" stroke-width="2.4"/>
+        <path d="M156 154h10M156 161h10M177 154h10M177 161h10" stroke="#cfe0f8" stroke-width="2" stroke-linecap="round"/>
+        <g fill="#8fd4ae">
+          <path d="M212 182q-9-18 4-26 10 10 5 26z"/>
+          <path d="M225 183q-7-14 3-20 8 8 4 20z"/>
+        </g>
+      </svg>
+      </div>
+      <p class="handwrite mascot-note">Cùng nhau tạo ra<br>một thế giới biết hơn 💙</p>
+    </div>
+  </aside>
+
+</div>
+<script src="/app.js"></script>
+</body>
+</html>

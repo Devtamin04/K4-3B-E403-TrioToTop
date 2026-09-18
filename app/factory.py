@@ -4,6 +4,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.adapters.sessions_memory import InMemorySessionRepository
 from app.adapters.student_fake import DeterministicStudentGenerator
@@ -60,4 +61,8 @@ def create_app(
         )
 
     application.include_router(create_router(service))
+
+    web_directory = PROJECT_ROOT / "web"
+    if web_directory.is_dir():
+        application.mount("/", StaticFiles(directory=web_directory, html=True), name="web")
     return application

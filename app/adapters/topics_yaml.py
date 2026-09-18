@@ -27,6 +27,9 @@ class YamlTopicRepository:
         except KeyError as error:
             raise NotFoundError(f"topic {topic_id!r} was not found") from error
 
+    def list_topics(self) -> list[TopicDefinition]:
+        return list(self._topics.values())
+
     @staticmethod
     def _load(path: Path) -> TopicDefinition:
         try:
