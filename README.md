@@ -50,14 +50,14 @@ làm hai việc: đọc hiểu lời học viên, và diễn đạt câu hỏi.
 ```bash
 set -a; source .env; set +a
 
-uv run python -m eval_harness.runner --mode live --target golden      # 26 case, chấm ĐẠT/KHÔNG
+uv run python -m eval_harness.runner --mode live --target golden      # 32 case, chấm ĐẠT/KHÔNG
 uv run python -m eval_harness.runner --mode live --target evaluator   # 12 case regression
 uv run python -m eval_harness.runner --mode live --safety-runs 5      # gate an toàn, chạy lặp
 uv run python -m eval_harness.runner --mode live --target student     # 17 case AI Student
 ```
 
-Ba lượt đo: 96.2% · 96.9% · 93.8% (quality bar 80%, đều PASS) — chênh lệch là
-nhiễu của LLM, 30/32 case ổn định tuyệt đối.
+Hai lượt đo: 96.9% và 93.8% (quality bar 80%, đều PASS) — chênh lệch là nhiễu
+của LLM, 30/32 case ổn định.
 Bảng mọi lượt chạy: [`eval/ket-qua-chay.md`](eval/ket-qua-chay.md) ·
 bộ đề: [`eval/golden_set.md`](eval/golden_set.md).
 

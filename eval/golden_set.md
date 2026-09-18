@@ -3,7 +3,7 @@
 Chủ đề đo: **Context Window**. 
 
 - **32 case**, trong đó **6 case phát triển từ chatlog thật** (`data/vlearn-pack/chatlog/tutor_turns.csv`,
-  dẫn nguồn bằng `turn_id`), 26 case nhóm tự xây.
+  dẫn nguồn bằng `turn_id`), còn lại nhóm tự xây.
   Guide §2.6 khuyến nghị ≥10 case từ chatlog — hiện mới có 6, xem §6.
 - Mỗi case chấm **ĐẠT / KHÔNG ĐẠT bằng máy**, không chấm tay.
 - **Quality bar (chốt trước lượt đo đầu, không đổi sau):**

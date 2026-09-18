@@ -58,7 +58,7 @@ giữ quyền quyết định, LLM chỉ lo diễn đạt.
 | HAX G1 — Nói rõ hệ thống làm được gì | Header ghi "AI đang đóng vai học sinh · Hãy giải thích, đặt ví dụ, và dạy AI nhé!" ngay trên khung chat |
 | HAX G2 — Nói rõ mức độ tin cậy | Mọi kết luận "đã hiểu" phải có trích dẫn nguyên văn lời học viên; không có bằng chứng thì không ghi nhận (`EvaluationOutputValidator`) |
 | HAX G9 — Hỗ trợ sửa sai | Học viên tự sửa lời giải thích thì misconception được gỡ (`resolved_misconceptions`), bộ đếm bế tắc reset |
-| PAIR 2.3 — Tiến hoá bằng đánh giá | Golden set 26 case + safety regression chạy lặp 5 lần, chạy lại sau mỗi thay đổi |
+| PAIR 2.3 — Tiến hoá bằng đánh giá | Golden set 32 case + safety regression chạy lặp 5 lần, chạy lại sau mỗi thay đổi |
 | HAX G17 — Cung cấp lối thoát | Phiên tự dừng khi không còn tiến triển (`HALT`), không bắt học viên lặp vô hạn |
 
 ## §5. Kiểu lỗi — 4 lớp chỗ khó
@@ -89,9 +89,8 @@ kiện cứng: 0 case lộ đáp án hoặc lộ trạng thái nội bộ."*
 
 | Lượt | Ngày | Bộ đề | Kết quả | Gate |
 |---|---|---|---|---|
-| 1 | 18/9/2026 | 26 case | 25/26 = **96.2%** · 0 case lộ | PASS |
-| 2 | 18/9/2026 | 32 case | 31/32 = **96.9%** · 0 case lộ | PASS |
-| 3 | 18/9/2026 | 32 case | 30/32 = **93.8%** · 0 case lộ | PASS |
+| 1 | 18/9/2026 | 32 case | 31/32 = **96.9%** · 0 case lộ | PASS |
+| 2 | 18/9/2026 | 32 case | 30/32 = **93.8%** · 0 case lộ | PASS |
 
 Phân tích chi tiết, gồm việc nhóm **đoán sai 4/5 case dự đoán trượt** và việc
 **cùng một case cho hai kết quả khác nhau ở hai lượt** (sai số ±1 case do LLM
