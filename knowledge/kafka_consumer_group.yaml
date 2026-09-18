@@ -1,0 +1,79 @@
+id: kafka_consumer_group
+version: "1.0.0"
+title: Kafka Consumer Group
+opening_question: >-
+  Mình chưa hiểu Kafka Consumer Group lắm. Bạn thử giải thích cho mình được không?
+completion_message: >-
+  Cảm ơn bạn. Qua phần giải thích này, mình đã hiểu các ý chính và chưa còn câu hỏi nào.
+
+concepts:
+  - id: consumer_group
+    required: true
+    priority: 10
+    description: >-
+      Consumers cooperate as a group to consume topic partitions.
+    probe_question: >-
+      Trước hết, nhiều consumer trong cùng một group phối hợp với nhau để làm gì vậy?
+    clarify_question: >-
+      Bạn có thể nói rõ hơn các consumer trong group phối hợp xử lý dữ liệu như thế nào không?
+
+  - id: group_id
+    required: true
+    priority: 20
+    description: >-
+      Consumers with the same group.id belong to the same consumer group.
+    probe_question: >-
+      Kafka dựa vào đâu để biết những consumer nào thuộc cùng một group vậy?
+    clarify_question: >-
+      Chỗ bạn nói các consumer “cùng nhóm” nghĩa là chúng được nhận diện chung bằng gì?
+
+  - id: partition_assignment
+    required: true
+    priority: 30
+    description: >-
+      Within one consumer group, a partition is assigned to at most one consumer at a time.
+    probe_question: >-
+      Nếu trong group có nhiều consumer thì các partition được chia cho chúng như thế nào?
+    clarify_question: >-
+      Bạn có thể nói rõ một partition có thể được bao nhiêu consumer trong cùng group xử lý cùng lúc không?
+
+  - id: offset
+    required: true
+    priority: 40
+    description: >-
+      An offset identifies a record position within a partition.
+    probe_question: >-
+      Nếu consumer restart thì nó biết lần trước mình đã đọc đến đâu bằng cách nào?
+    clarify_question: >-
+      Chỗ bạn nói Kafka nhớ vị trí, vị trí đó đại diện cho điều gì trong partition?
+
+  - id: rebalance
+    required: true
+    priority: 50
+    description: >-
+      Partition ownership is redistributed when relevant group membership or subscription changes.
+    probe_question: >-
+      Nếu một consumer tham gia hoặc rời group thì việc chia partition thay đổi ra sao?
+    clarify_question: >-
+      Bạn có thể làm rõ khi nào Kafka cần chia lại quyền sở hữu partition không?
+
+misconceptions:
+  - id: M01
+    concept_id: partition_assignment
+    priority: 10
+    incorrect_claim: >-
+      Every consumer in a group receives every message.
+    correction: >-
+      Topic partitions are distributed among consumers in the group.
+    challenge_question: >-
+      Nếu mọi consumer đều nhận cùng mọi message thì việc thêm consumer vào group giúp chia tải như thế nào?
+
+  - id: M02
+    concept_id: offset
+    priority: 20
+    incorrect_claim: >-
+      Offset is the number of messages remaining.
+    correction: >-
+      Offset represents a record position within a partition.
+    challenge_question: >-
+      Nếu producer liên tục thêm message thì số message còn lại thay đổi suốt; giá trị đó làm sao chỉ đúng nơi consumer đã đọc tới?

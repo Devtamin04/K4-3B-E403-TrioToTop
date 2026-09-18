@@ -1,0 +1,145 @@
+- id: partial_consumer_group
+  topic_id: kafka_consumer_group
+  user_message: "Consumer group là nhiều consumer cùng xử lý dữ liệu của một topic."
+  result:
+    covered: [consumer_group]
+    evidence:
+      - concept_id: consumer_group
+        user_quote: "nhiều consumer cùng xử lý dữ liệu"
+        judgment: correct
+        explanation: "The user describes consumers cooperating to process topic data."
+        confidence: 0.95
+    recommended_target: group_id
+    confidence: 0.95
+
+- id: unclear_group_id
+  topic_id: kafka_consumer_group
+  user_message: "Chúng ở cùng nhóm vì Kafka biết vậy."
+  result:
+    unclear: [group_id]
+    evidence:
+      - concept_id: group_id
+        user_quote: "Kafka biết vậy"
+        judgment: unclear
+        explanation: "The mechanism identifying group membership is ambiguous."
+        confidence: 0.9
+    recommended_target: group_id
+    confidence: 0.9
+
+- id: cover_group_id
+  topic_id: kafka_consumer_group
+  user_message: "Các consumer có cùng group.id thì thuộc cùng một consumer group."
+  result:
+    covered: [group_id]
+    evidence:
+      - concept_id: group_id
+        user_quote: "cùng group.id"
+        judgment: correct
+        explanation: "The user correctly identifies group.id as the membership key."
+        confidence: 0.99
+    recommended_target: partition_assignment
+    confidence: 0.99
+
+- id: partition_misconception
+  topic_id: kafka_consumer_group
+  user_message: "Mỗi consumer trong group đều nhận mọi message."
+  result:
+    misconceptions: [M01]
+    evidence:
+      - concept_id: partition_assignment
+        user_quote: "đều nhận mọi message"
+        judgment: incorrect
+        explanation: "The user says every group member receives every message."
+        confidence: 0.99
+    recommended_target: M01
+    confidence: 0.99
+
+- id: resolve_partition_misconception
+  topic_id: kafka_consumer_group
+  user_message: "À, trong một group, mỗi partition chỉ được giao cho tối đa một consumer tại một thời điểm."
+  result:
+    covered: [partition_assignment]
+    resolved_misconceptions: [M01]
+    evidence:
+      - concept_id: partition_assignment
+        user_quote: "mỗi partition chỉ được giao cho tối đa một consumer"
+        judgment: correct
+        explanation: "The corrected explanation states the assignment constraint."
+        confidence: 0.99
+    recommended_target: offset
+    confidence: 0.99
+
+- id: offset_misconception
+  topic_id: kafka_consumer_group
+  user_message: "Offset là số message còn lại chưa đọc."
+  result:
+    misconceptions: [M02]
+    evidence:
+      - concept_id: offset
+        user_quote: "số message còn lại chưa đọc"
+        judgment: incorrect
+        explanation: "The user confuses a record position with remaining message count."
+        confidence: 0.99
+    recommended_target: M02
+    confidence: 0.99
+
+- id: resolve_offset_misconception
+  topic_id: kafka_consumer_group
+  user_message: "Offset là vị trí của record trong một partition."
+  result:
+    covered: [offset]
+    resolved_misconceptions: [M02]
+    evidence:
+      - concept_id: offset
+        user_quote: "vị trí của record trong một partition"
+        judgment: correct
+        explanation: "The user correctly defines offset as a record position."
+        confidence: 0.99
+    recommended_target: rebalance
+    confidence: 0.99
+
+- id: cover_rebalance
+  topic_id: kafka_consumer_group
+  user_message: "Khi consumer tham gia hoặc rời group, Kafka rebalance và phân phối lại partition."
+  result:
+    covered: [rebalance]
+    evidence:
+      - concept_id: rebalance
+        user_quote: "consumer tham gia hoặc rời group"
+        judgment: correct
+        explanation: "The user connects membership changes to partition redistribution."
+        confidence: 0.99
+    confidence: 0.99
+
+- id: all_required_at_once
+  topic_id: kafka_consumer_group
+  user_message: "Giải thích đầy đủ theo fixture kiểm thử."
+  result:
+    covered: [consumer_group, group_id, partition_assignment, offset, rebalance]
+    evidence:
+      - concept_id: consumer_group
+        user_quote: "Giải thích đầy đủ"
+        judgment: correct
+        explanation: "Fixture evidence for consumer group."
+        confidence: 1.0
+      - concept_id: group_id
+        user_quote: "Giải thích đầy đủ"
+        judgment: correct
+        explanation: "Fixture evidence for group ID."
+        confidence: 1.0
+      - concept_id: partition_assignment
+        user_quote: "Giải thích đầy đủ"
+        judgment: correct
+        explanation: "Fixture evidence for assignment."
+        confidence: 1.0
+      - concept_id: offset
+        user_quote: "Giải thích đầy đủ"
+        judgment: correct
+        explanation: "Fixture evidence for offset."
+        confidence: 1.0
+      - concept_id: rebalance
+        user_quote: "Giải thích đầy đủ"
+        judgment: correct
+        explanation: "Fixture evidence for rebalance."
+        confidence: 1.0
+    confidence: 1.0
