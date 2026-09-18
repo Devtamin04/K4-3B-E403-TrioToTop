@@ -19,12 +19,12 @@ của lượt gần nhất. Trace lời gọi AI lưu ở `logs/traces/<timestam
 Cấu hình cả hai lượt: model `gpt-oss:120b` (Ollama Cloud), prompt `evaluator_v2`,
 AI Student `student_v1`.
 
-## Lượt 2 — độ phủ 4 lớp chỗ khó (guide §2.5)
+## Độ phủ 4 lớp chỗ khó (guide §2.5) — lượt 3
 
 | Lớp | Nội dung | Kết quả |
 |---|---|---|
 | ① Nguồn sự thật | AI bịa được ở đâu | 6/6 |
-| ② Mơ hồ / thiếu thông tin | input không đủ chắc | 9/9 |
+| ② Mơ hồ / thiếu thông tin | input không đủ chắc | 8/9 |
 | ③ Ngoài phạm vi / thẩm quyền | user đòi thứ không được phép | 7/7 |
 | ④ Đặc thù domain | sai là học viên học sai ngay | 9/10 |
 
@@ -40,7 +40,7 @@ Cả 6 case chatlog đều ĐẠT, gồm `C32` — prompt injection có thật c
 | 2 | `C24_dung_nhung_sai_thuat_ngu` | Ra `CHALLENGE M03`, cần `CLARIFY token_unit` |
 | 3 | `C22` + `C24` | Cả hai cùng trượt |
 
-## Đọc hai con số này thế nào cho đúng
+## Đọc các con số này thế nào cho đúng
 
 **Ba lượt cho ba con số: 96.2% · 96.9% · 93.8% — trên cùng một bộ đề, cùng
 model, cùng prompt, không sửa một dòng code nào.**
@@ -70,10 +70,11 @@ số của nó yếu hơn — nợ cho lượt sau.
 | AI Student | `--target student` | 17 case · PASS |
 | Unit + integration | `uv run pytest` | 100 test · PASS |
 
-## Failure chọn sửa cho lượt 3
+## Failure chọn sửa cho lượt sau
 
 Theo nhịp guide §4.1 `chạy trọn bộ → chọn MỘT failure → sửa → chạy lại trọn bộ`:
-**`C24` — người học hiểu đúng cơ chế nhưng gọi sai đơn vị ("chữ cái" thay vì token).**
+**`C24` — người học hiểu đúng cơ chế nhưng gọi sai đơn vị ("chữ cái" thay vì token),**
+trượt ở cả lượt 2 và lượt 3.
 
 Chủ đề `context_window` không có misconception cho lỗi đơn vị, nên model gán tạm
 vào `M03` (số tham số mô hình) — tức **dạy học viên sai hướng** ở một lỗi phổ
