@@ -1,6 +1,6 @@
 id: llm_limits_rag_finetuning
 version: "1.0.0"
-title: LLM Limits, Tool Calling, RAG and Fine-tuning
+title: Giới hạn của LLM, RAG và Fine-tuning
 opening_question: >-
   Mình đang phân vân khi nào thì một bài toán dùng thẳng LLM được, khi nào phải lắp thêm thứ khác.
   Bạn giải thích giúp mình nhé?
@@ -16,8 +16,8 @@ concepts:
     required: true
     priority: 10
     description: >-
-      A model's knowledge stops at the point its training data ends, so it cannot know events
-      that happened afterwards.
+      Kiến thức của mô hình dừng lại ở thời điểm dữ liệu huấn luyện kết thúc, nên nó không
+      biết những sự kiện xảy ra sau đó.
     probe_question: >-
       Nếu hỏi mô hình về một sự kiện vừa xảy ra tuần trước, nó có trả lời đúng được không, vì sao?
     clarify_question: >-
@@ -27,8 +27,8 @@ concepts:
     required: true
     priority: 20
     description: >-
-      Internal or organization-specific material was never in the training data, so the model
-      cannot answer from it without being given that material.
+      Tài liệu nội bộ của một tổ chức chưa từng nằm trong dữ liệu huấn luyện, nên mô hình không
+      thể trả lời dựa trên đó nếu không được cung cấp tài liệu.
     probe_question: >-
       Muốn chatbot trả lời đúng quy định nội bộ của một công ty cụ thể, khó khăn đầu tiên là gì?
     clarify_question: >-
@@ -38,8 +38,8 @@ concepts:
     required: true
     priority: 30
     description: >-
-      For tasks with an exact answer, the model can recognize the intent, extract the arguments
-      and call an external function instead of producing the result itself.
+      Với các tác vụ có đáp án chính xác, mô hình có thể nhận diện ý định, bóc tách tham số và
+      gọi một hàm bên ngoài thay vì tự sinh ra kết quả.
     probe_question: >-
       Với những tác vụ cần kết quả chính xác tuyệt đối như tính toán, có cách nào tốt hơn là để mô hình tự trả lời không?
     clarify_question: >-
@@ -49,8 +49,8 @@ concepts:
     required: true
     priority: 40
     description: >-
-      Relevant documents are retrieved and placed into the context so the model answers by
-      reasoning over supplied text rather than from memory.
+      Tài liệu liên quan được truy xuất và đưa vào ngữ cảnh để mô hình trả lời bằng cách suy luận
+      trên văn bản được cung cấp, thay vì dựa vào trí nhớ.
     probe_question: >-
       Khi tài liệu nội bộ không nằm trong dữ liệu huấn luyện, làm sao để mô hình vẫn trả lời dựa trên tài liệu đó?
     clarify_question: >-
@@ -60,8 +60,8 @@ concepts:
     required: true
     priority: 50
     description: >-
-      Fine-tuning steers a model toward specific data but requires data work and tends to cost
-      generalization, so it is a trade-off rather than a default choice.
+      Fine-tuning lái mô hình theo dữ liệu cụ thể nhưng đòi hỏi công sức xử lý dữ liệu và thường
+      đánh đổi khả năng tổng quát, nên là một lựa chọn đánh đổi chứ không mặc định.
     probe_question: >-
       Fine-tuning nghe có vẻ mạnh hơn; vậy tại sao không phải lúc nào cũng nên chọn nó?
     clarify_question: >-
@@ -72,10 +72,10 @@ misconceptions:
     concept_id: finetuning_tradeoff
     priority: 10
     incorrect_claim: >-
-      Fine-tuning is always the best option because it makes the model smarter overall.
+      Fine-tuning luôn là lựa chọn tốt nhất vì nó làm mô hình thông minh hơn về mọi mặt.
     correction: >-
-      Fine-tuning specializes a model and usually reduces its general capability, so it suits
-      narrow domains rather than every situation.
+      Fine-tuning chuyên biệt hoá mô hình và thường làm giảm năng lực tổng quát, nên phù hợp với
+      lĩnh vực hẹp chứ không phải mọi tình huống.
     challenge_question: >-
       Nếu fine-tune luôn làm mô hình giỏi hơn, thì sau khi tune sâu vào một lĩnh vực hẹp, khả năng làm
       các tác vụ chung của nó sẽ thay đổi thế nào?
@@ -84,10 +84,9 @@ misconceptions:
     concept_id: rag
     priority: 20
     incorrect_claim: >-
-      RAG permanently teaches the documents to the model, the same way training does.
+      RAG dạy tài liệu vào mô hình một cách vĩnh viễn, giống như quá trình huấn luyện.
     correction: >-
-      RAG supplies documents at answering time through the context; the model's weights are
-      unchanged.
+      RAG cung cấp tài liệu ngay lúc trả lời thông qua ngữ cảnh; trọng số của mô hình không đổi.
     challenge_question: >-
       Nếu RAG thực sự dạy luôn tài liệu vào mô hình, thì khi bỏ hệ thống truy xuất đi mô hình vẫn trả lời
       đúng tài liệu nội bộ chứ?
@@ -96,10 +95,10 @@ misconceptions:
     concept_id: tool_calling
     priority: 30
     incorrect_claim: >-
-      A capable enough LLM never needs external tools because it can compute anything itself.
+      Một LLM đủ mạnh thì không bao giờ cần công cụ bên ngoài vì nó tự tính được mọi thứ.
     correction: >-
-      Delegating exact tasks to a function gives reliable results that generation alone does not
-      guarantee.
+      Giao các tác vụ cần chính xác cho một hàm sẽ cho kết quả đáng tin cậy mà việc tự sinh văn bản
+      không đảm bảo được.
     challenge_question: >-
       Với một phép tính cần đúng tuyệt đối, kết quả do mô hình tự sinh ra và kết quả do một hàm tính toán
       trả về khác nhau ở điểm nào về mặt đảm bảo?
@@ -108,10 +107,10 @@ misconceptions:
     concept_id: knowledge_cutoff
     priority: 40
     incorrect_claim: >-
-      An LLM updates its own knowledge automatically as new events happen in the world.
+      LLM tự động cập nhật kiến thức của nó khi có sự kiện mới xảy ra.
     correction: >-
-      The model's knowledge is fixed at training time; newer information must be brought in from
-      outside, for example by search or retrieval.
+      Kiến thức của mô hình được cố định lúc huấn luyện; thông tin mới phải được đưa vào từ bên
+      ngoài, ví dụ bằng tìm kiếm hoặc truy xuất.
     challenge_question: >-
       Nếu mô hình tự cập nhật kiến thức theo thời gian, thì vì sao người ta vẫn phải lắp thêm công cụ tìm kiếm
       cho nó khi cần thông tin mới?

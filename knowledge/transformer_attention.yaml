@@ -1,6 +1,6 @@
 id: transformer_attention
 version: "1.0.0"
-title: Transformer and Self-Attention
+title: Transformer và cơ chế Self-Attention
 opening_question: >-
   Mình nghe nói Transformer là kiến trúc nền của các LLM hiện nay, nhưng chưa hình dung
   được nó xử lý một câu như thế nào. Bạn giảng lại cho mình nhé?
@@ -16,8 +16,8 @@ concepts:
     required: true
     priority: 10
     description: >-
-      Each token is converted into a vector so that it has a position in a mathematical
-      space and can be computed with.
+      Mỗi token được chuyển thành một vectơ để có vị trí trong không gian toán học và
+      có thể tính toán được.
     probe_question: >-
       Sau khi văn bản được tách thành token, mô hình phải làm gì với các token đó để tính toán được?
     clarify_question: >-
@@ -27,8 +27,8 @@ concepts:
     required: true
     priority: 20
     description: >-
-      Each token looks at the other tokens and scores how related they are, so the model can
-      resolve which earlier token a word refers to.
+      Mỗi token nhìn sang các token khác và chấm điểm mức độ liên quan, nhờ đó mô hình
+      xác định được một từ đang chỉ tới token nào.
     probe_question: >-
       Khi trong câu có một đại từ như "nó", mô hình dựa vào cơ chế nào để biết "nó" chỉ cái gì?
     clarify_question: >-
@@ -38,8 +38,8 @@ concepts:
     required: true
     priority: 30
     description: >-
-      Attention compares a query against the keys of other tokens to decide how much of each
-      token's value to use.
+      Attention so sánh query với key của các token khác để quyết định lấy bao nhiêu phần
+      value của mỗi token.
     probe_question: >-
       Trong cơ chế attention có ba thành phần Q, K, V; vai trò của từng cái là gì vậy bạn?
     clarify_question: >-
@@ -49,8 +49,8 @@ concepts:
     required: true
     priority: 40
     description: >-
-      Unlike sequential architectures, a Transformer lets all tokens attend to one another at
-      the same time rather than passing information step by step.
+      Khác với các kiến trúc tuần tự, Transformer cho phép mọi token nhìn lẫn nhau cùng lúc
+      thay vì truyền thông tin qua từng bước.
     probe_question: >-
       Transformer xử lý các token trong câu theo thứ tự lần lượt hay cùng lúc, và điều đó có lợi gì?
     clarify_question: >-
@@ -60,8 +60,8 @@ concepts:
     required: true
     priority: 50
     description: >-
-      The comparison produces a score showing how strongly two tokens relate, and the highest
-      score decides which token is used as the reference.
+      Phép so sánh tạo ra điểm số thể hiện mức độ liên quan giữa hai token, và điểm cao nhất
+      quyết định token nào được chọn làm tham chiếu.
     probe_question: >-
       Sau khi các token nhìn nhau, mô hình dựa vào đâu để chọn ra token liên quan nhất?
     clarify_question: >-
@@ -72,11 +72,11 @@ misconceptions:
     concept_id: self_attention
     priority: 10
     incorrect_claim: >-
-      Self-attention means the model reads the sentence word by word from left to right and
-      remembers the previous word.
+      Self-attention nghĩa là mô hình đọc câu lần lượt từng từ từ trái sang phải và nhớ từ
+      phía trước.
     correction: >-
-      Every token attends to all the other tokens at once; reading strictly in sequence is how
-      earlier architectures such as RNN or LSTM worked.
+      Mọi token nhìn tất cả các token khác cùng một lúc; đọc tuần tự là cách các kiến trúc cũ
+      như RNN hay LSTM hoạt động.
     challenge_question: >-
       Nếu mô hình chỉ đọc lần lượt từng từ và nhớ từ phía trước, thì với một văn bản rất dài nó sẽ gặp
       vấn đề gì mà Transformer lại tránh được?
@@ -85,10 +85,10 @@ misconceptions:
     concept_id: embedding
     priority: 20
     incorrect_claim: >-
-      Embedding stores the dictionary meaning of a word as text inside the model.
+      Embedding lưu nghĩa từ điển của một từ dưới dạng chữ bên trong mô hình.
     correction: >-
-      Embedding places a token as a vector in a mathematical space so it can be computed with,
-      rather than storing a textual definition.
+      Embedding đặt token thành một vectơ trong không gian toán học để tính toán được, chứ
+      không lưu một định nghĩa bằng chữ.
     challenge_question: >-
       Nếu mô hình lưu thẳng nghĩa của từ dưới dạng chữ, thì nó thực hiện các phép tính trên nghĩa đó
       bằng cách nào?
@@ -97,10 +97,10 @@ misconceptions:
     concept_id: parallel_processing
     priority: 30
     incorrect_claim: >-
-      Transformer is faster only because it runs on more powerful hardware.
+      Transformer nhanh hơn chỉ vì nó chạy trên phần cứng mạnh hơn.
     correction: >-
-      The speed comes from the architecture itself allowing tokens to be processed in parallel,
-      not merely from faster hardware.
+      Tốc độ đến từ chính kiến trúc cho phép xử lý các token song song, không chỉ do phần cứng
+      nhanh hơn.
     challenge_question: >-
       Nếu chỉ do phần cứng mạnh hơn, thì chạy kiến trúc tuần tự cũ trên đúng phần cứng đó có cho kết quả
       tương đương không, và vì sao?

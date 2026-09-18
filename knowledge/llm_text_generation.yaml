@@ -1,6 +1,6 @@
 id: llm_text_generation
 version: "1.0.0"
-title: How an LLM Generates Text
+title: Cách LLM sinh văn bản
 opening_question: >-
   Mình vẫn chưa hình dung LLM tạo ra một câu trả lời như thế nào. Bạn thử giải thích
   cho mình từ lúc nhận văn bản đầu vào nhé?
