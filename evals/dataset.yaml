@@ -1,0 +1,162 @@
+- id: fully_correct
+  category: fully_correct_explanation
+  topic_id: kafka_consumer_group
+  latest_user_message: >-
+    Consumer group gồm các consumer có cùng group.id để phối hợp xử lý topic.
+    Mỗi partition chỉ được một consumer trong group xử lý tại một thời điểm,
+    offset là vị trí record trong partition, và khi thành viên thay đổi Kafka
+    rebalance để phân phối lại partition.
+  expected:
+    covered: [consumer_group, group_id, partition_assignment, offset, rebalance]
+    evidence:
+      - {concept_id: consumer_group, user_quote: "phối hợp xử lý topic", judgment: correct, explanation: "Consumers cooperate.", confidence: 0.98}
+      - {concept_id: group_id, user_quote: "cùng group.id", judgment: correct, explanation: "Membership uses group.id.", confidence: 0.98}
+      - {concept_id: partition_assignment, user_quote: "Mỗi partition chỉ được một consumer", judgment: correct, explanation: "One group consumer owns a partition at a time.", confidence: 0.98}
+      - {concept_id: offset, user_quote: "offset là vị trí record trong partition", judgment: correct, explanation: "Offset is a record position.", confidence: 0.98}
+      - {concept_id: rebalance, user_quote: "rebalance để phân phối lại partition", judgment: correct, explanation: "Membership change redistributes partitions.", confidence: 0.98}
+    confidence: 0.98
+  completion_safe: true
+
+- id: partial_explanation
+  category: partial_explanation
+  topic_id: kafka_consumer_group
+  latest_user_message: "Consumer group là nhiều consumer phối hợp xử lý dữ liệu của một topic."
+  expected:
+    covered: [consumer_group]
+    evidence:
+      - {concept_id: consumer_group, user_quote: "nhiều consumer phối hợp xử lý dữ liệu", judgment: correct, explanation: "Consumers cooperate.", confidence: 0.95}
+    recommended_target: group_id
+    confidence: 0.95
+  completion_safe: false
+
+- id: missing_rebalance
+  category: missing_concept
+  topic_id: kafka_consumer_group
+  latest_user_message: >-
+    Các consumer cùng group.id hợp thành consumer group để xử lý topic. Trong
+    group, một partition chỉ giao cho một consumer, còn offset chỉ vị trí record
+    trong partition.
+  expected:
+    covered: [consumer_group, group_id, partition_assignment, offset]
+    evidence:
+      - {concept_id: consumer_group, user_quote: "hợp thành consumer group để xử lý topic", judgment: correct, explanation: "Consumers cooperate as a group.", confidence: 0.95}
+      - {concept_id: group_id, user_quote: "cùng group.id", judgment: correct, explanation: "Membership uses group.id.", confidence: 0.98}
+      - {concept_id: partition_assignment, user_quote: "một partition chỉ giao cho một consumer", judgment: correct, explanation: "Assignment is exclusive within the group.", confidence: 0.98}
+      - {concept_id: offset, user_quote: "offset chỉ vị trí record trong partition", judgment: correct, explanation: "Offset is a record position.", confidence: 0.98}
+    recommended_target: rebalance
+    confidence: 0.96
+  completion_safe: false
+
+- id: ambiguous_group_id
+  category: ambiguous_explanation
+  topic_id: kafka_consumer_group
+  prior_state:
+    covered_concepts: [consumer_group, partition_assignment, offset, rebalance]
+  latest_user_message: "Các consumer ở cùng nhóm vì Kafka biết chúng liên quan với nhau."
+  expected:
+    unclear: [group_id]
+    evidence:
+      - {concept_id: group_id, user_quote: "Kafka biết chúng liên quan với nhau", judgment: unclear, explanation: "The membership identifier is ambiguous.", confidence: 0.9}
+    recommended_target: group_id
+    confidence: 0.9
+  completion_safe: false
+
+- id: known_offset_misconception
+  category: known_misconception
+  topic_id: kafka_consumer_group
+  prior_state:
+    covered_concepts: [consumer_group, group_id, partition_assignment, rebalance]
+  latest_user_message: "Offset là số lượng message consumer còn chưa đọc."
+  expected:
+    misconceptions: [M02]
+    evidence:
+      - {concept_id: offset, user_quote: "số lượng message consumer còn chưa đọc", judgment: incorrect, explanation: "Offset is confused with remaining count.", confidence: 0.99}
+    recommended_target: M02
+    confidence: 0.99
+  completion_safe: false
+
+- id: offset_self_correction
+  category: misconception_self_correction
+  topic_id: kafka_consumer_group
+  prior_state:
+    turn_count: 2
+    covered_concepts: [consumer_group, group_id, partition_assignment, rebalance]
+    active_misconceptions: [M02]
+  history:
+    - {role: human_teacher, content: "Offset là số message còn lại.", turn_number: 2}
+    - {role: ai_student, content: "Nếu message mới đến thì con số đó thay đổi thế nào?", turn_number: 2}
+  latest_user_message: "Mình sửa lại: offset là vị trí của record trong một partition."
+  expected:
+    covered: [offset]
+    resolved_misconceptions: [M02]
+    evidence:
+      - {concept_id: offset, user_quote: "offset là vị trí của record trong một partition", judgment: correct, explanation: "The active misconception is explicitly corrected.", confidence: 0.99}
+    confidence: 0.99
+  completion_safe: true
+
+- id: conflicting_latest_claim
+  category: conflicting_statements
+  topic_id: kafka_consumer_group
+  prior_state:
+    turn_count: 3
+    covered_concepts: [consumer_group, group_id, partition_assignment, offset, rebalance]
+  history:
+    - {role: human_teacher, content: "Offset là vị trí record trong partition.", turn_number: 3}
+  latest_user_message: "Trước mình nói offset là vị trí, nhưng thực ra offset là số message còn lại."
+  expected:
+    misconceptions: [M02]
+    evidence:
+      - {concept_id: offset, user_quote: "offset là số message còn lại", judgment: incorrect, explanation: "The latest explicit claim contradicts earlier correct evidence.", confidence: 0.99}
+    recommended_target: M02
+    confidence: 0.99
+  completion_safe: false
+
+- id: off_topic
+  category: off_topic_answer
+  topic_id: kafka_consumer_group
+  latest_user_message: "Hôm nay thời tiết khá đẹp và mình muốn đi uống cà phê."
+  expected:
+    confidence: 0.98
+  completion_safe: false
+
+- id: very_short
+  category: very_short_answer
+  topic_id: kafka_consumer_group
+  latest_user_message: "Đúng rồi."
+  expected:
+    confidence: 0.98
+  completion_safe: false
+
+- id: asks_for_answer
+  category: user_asks_ai_for_answer
+  topic_id: kafka_consumer_group
+  latest_user_message: "Mình không biết; bạn giải thích đáp án cho mình đi."
+  expected:
+    confidence: 0.99
+  completion_safe: false
+
+- id: vocabulary_without_explanation
+  category: vocabulary_only
+  topic_id: kafka_consumer_group
+  latest_user_message: "Consumer group, group.id, partition, offset và rebalance."
+  expected:
+    confidence: 0.95
+  completion_safe: false
+
+- id: mixed_correct_and_wrong
+  category: mixed_correct_incorrect
+  topic_id: kafka_consumer_group
+  prior_state:
+    covered_concepts: [group_id, partition_assignment, rebalance]
+  latest_user_message: >-
+    Consumer group là các consumer phối hợp xử lý topic, còn offset là số message
+    chưa đọc.
+  expected:
+    covered: [consumer_group]
+    misconceptions: [M02]
+    evidence:
+      - {concept_id: consumer_group, user_quote: "các consumer phối hợp xử lý topic", judgment: correct, explanation: "The group purpose is correct.", confidence: 0.96}
+      - {concept_id: offset, user_quote: "offset là số message chưa đọc", judgment: incorrect, explanation: "Offset is confused with unread count.", confidence: 0.99}
+    recommended_target: M02
+    confidence: 0.97
+  completion_safe: false
