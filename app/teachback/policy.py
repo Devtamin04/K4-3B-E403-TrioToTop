@@ -15,27 +15,20 @@ class PolicyEngine:
         if state.status is not SessionStatus.ACTIVE:
             raise ValueError("policy can only run for an active session")
 
-        if state.barren_turns >= BARREN_TURN_LIMIT:
-            return PolicyDecision(
-                action=Action.HALT,
-                target=None,
-                reason_code="learner_stopped_teaching",
-            )
-
-        # Bỏ qua mục tiêu đang bế tắc để đổi hướng thay vì hỏi lại y hệt.
-        stalled = state.stalled_targets
-        decision = self._next_target(topic, state, stalled)
+        # Đổi sang mục tiêu khác trước đã: người học bí một khái niệm không có
+        # nghĩa là bí cả chủ đề, nên còn khái niệm chưa thử thì chưa dừng.
+        decision = self._next_target(topic, state, state.stalled_targets)
         if decision is not None:
             return decision
 
-        # Mọi mục tiêu còn lại đều bế tắc: thử lại chúng một lượt cuối.
-        decision = self._next_target(topic, state, frozenset())
-        if decision is not None:
-            return PolicyDecision(
-                action=Action.HALT,
-                target=None,
-                reason_code="all_targets_stalled",
+        # Đã thử hết mọi mục tiêu mà vẫn bế tắc thì mới dừng.
+        if self._next_target(topic, state, frozenset()) is not None:
+            reason = (
+                "learner_stopped_teaching"
+                if state.barren_turns >= BARREN_TURN_LIMIT
+                else "all_targets_stalled"
             )
+            return PolicyDecision(action=Action.HALT, target=None, reason_code=reason)
 
         return PolicyDecision(
             action=Action.FINISH,

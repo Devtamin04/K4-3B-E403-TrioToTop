@@ -38,16 +38,38 @@ def _empty_result() -> EvaluationResult:
     return EvaluationResult(confidence=0.5)
 
 
-def test_barren_turns_accumulate_then_halt() -> None:
+def test_barren_turns_try_other_concepts_before_halting() -> None:
+    """Bí một khái niệm không phải bí cả chủ đề: phải thử hết rồi mới dừng."""
+
     topic = _topic()
     reducer = StateReducer()
+    policy = PolicyEngine()
     state = _state(topic)
+    asked: list[str] = []
 
-    for _ in range(BARREN_TURN_LIMIT):
+    for _ in range(20):
         state = reducer.apply(topic, state, _empty_result(), MESSAGE)
+        decision = policy.choose(topic, state)
+        if decision.action is Action.HALT:
+            break
+        assert decision.target is not None
+        asked.append(decision.target.id)
+        state = state.model_copy(update={"current_target": decision.target})
 
-    assert state.barren_turns == BARREN_TURN_LIMIT
+    assert decision.action is Action.HALT
+    assert set(asked) == topic.required_concept_ids, "phải hỏi hết mọi khái niệm trước khi dừng"
+
+
+def test_halt_reports_a_barren_session() -> None:
+    topic = _topic()
+    state = _state(
+        topic,
+        stalled_targets=topic.required_concept_ids,
+        barren_turns=BARREN_TURN_LIMIT,
+    )
+
     decision = PolicyEngine().choose(topic, state)
+
     assert decision.action is Action.HALT
     assert decision.reason_code == "learner_stopped_teaching"
     assert decision.target is None
@@ -85,6 +107,38 @@ def test_repeating_a_target_without_progress_marks_it_stalled() -> None:
         state = reducer.apply(topic, state, _empty_result(), MESSAGE)
 
     assert "token_unit" in state.stalled_targets
+
+
+def test_barren_session_switches_target_sooner() -> None:
+    """Khi không còn bằng chứng nào, đổi khái niệm ngay thay vì hỏi lại ba lần."""
+
+    topic = _topic()
+    reducer = StateReducer()
+    state = _state(
+        topic,
+        current_target=Target(kind=TargetKind.CONCEPT, id="token_unit"),
+        barren_turns=BARREN_TURN_LIMIT,
+    )
+
+    updated = reducer.apply(topic, state, _empty_result(), MESSAGE)
+
+    assert "token_unit" in updated.stalled_targets
+
+
+def test_engaged_learner_keeps_the_full_stall_budget() -> None:
+    """Người học vẫn đang dạy thì được hỏi lại đủ ba lần trước khi đổi hướng."""
+
+    topic = _topic()
+    reducer = StateReducer()
+    state = _state(
+        topic,
+        current_target=Target(kind=TargetKind.CONCEPT, id="token_unit"),
+        barren_turns=0,
+    )
+
+    updated = reducer.apply(topic, state, _empty_result(), MESSAGE)
+
+    assert updated.stalled_targets == frozenset()
 
 
 def test_policy_skips_a_stalled_target() -> None:

@@ -14,6 +14,9 @@ STALL_THRESHOLD = 3
 BARREN_TURN_LIMIT = 3
 """Số lượt liên tiếp không có bằng chứng trước khi coi là người học đã ngừng dạy."""
 
+BARREN_STALL_THRESHOLD = 1
+"""Ngưỡng bế tắc rút gọn khi phiên đã khô hạn: đổi khái niệm ngay sau một lần hỏi."""
+
 
 def missing_concepts(topic: TopicDefinition, state: TeachBackState) -> frozenset[str]:
     return topic.required_concept_ids - state.covered_concepts
@@ -69,7 +72,10 @@ class StateReducer:
             or unclear != set(state.unclear_concepts)
             or active_misconceptions != set(state.active_misconceptions)
         )
-        attempts, stalled = self._track_target_attempts(state, made_progress)
+        barren_turns = 0 if result.evidence else state.barren_turns + 1
+        attempts, stalled = self._track_target_attempts(
+            state, made_progress, barren=barren_turns >= BARREN_TURN_LIMIT
+        )
 
         return state.model_copy(
             update={
@@ -80,13 +86,13 @@ class StateReducer:
                 "turn_count": expected_turn,
                 "attempts_per_target": attempts,
                 "stalled_targets": stalled,
-                "barren_turns": 0 if result.evidence else state.barren_turns + 1,
+                "barren_turns": barren_turns,
             }
         )
 
     @staticmethod
     def _track_target_attempts(
-        state: TeachBackState, made_progress: bool
+        state: TeachBackState, made_progress: bool, *, barren: bool
     ) -> tuple[dict[str, int], frozenset[str]]:
         """Đếm số lần hỏi lại cùng một mục tiêu mà trạng thái không đổi.
 
@@ -103,7 +109,10 @@ class StateReducer:
             return attempts, state.stalled_targets - {target.id}
 
         attempts[target.id] = attempts.get(target.id, 0) + 1
-        if attempts[target.id] >= STALL_THRESHOLD:
+        # Khi người học không còn đưa ra bằng chứng nào, hỏi lại nhiều lần cùng
+        # một khái niệm là vô ích, nên chuyển hướng sớm hơn.
+        threshold = BARREN_STALL_THRESHOLD if barren else STALL_THRESHOLD
+        if attempts[target.id] >= threshold:
             return attempts, state.stalled_targets | {target.id}
         return attempts, state.stalled_targets
 
