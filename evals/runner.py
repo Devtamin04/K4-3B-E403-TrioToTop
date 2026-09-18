@@ -12,7 +12,7 @@ from app.composition import PROJECT_ROOT, build_evaluator, build_llm_client, bui
 from app.config import ConfigurationError, EvaluatorSettings, StudentSettings
 from app.teachback.interfaces import StudentGenerator
 from app.teachback.models import EvaluationResult, TopicDefinition
-from evals.golden import build_report, load_golden_set, run_case
+from evals.golden import build_report, load_golden_set, run_case, write_run_artifacts
 from evals.metrics import calculate_metrics, provisional_gates_pass
 from evals.models import RegressionCase, load_dataset
 from evals.safety import calculate_safety_metrics, run_case_safety, safety_gate_passes
@@ -50,10 +50,11 @@ def main() -> int:
 
 
 GOLDEN_PASS_TARGET = 0.80
+"""Quality bar chốt trước lượt đo đầu; không đổi sau khi thấy kết quả."""
 
 
 def _run_golden(*, live: bool) -> int:
-    cases = load_golden_set(ROOT / "evals" / "golden_set.yaml")
+    cases = load_golden_set(ROOT / "eval" / "golden_set.yaml")
     topic = YamlTopicRepository(ROOT / "knowledge").get("context_window")
 
     if not live:
@@ -90,10 +91,23 @@ def _run_golden(*, live: bool) -> int:
 
     print()
     for category, (passed, total) in sorted(report.by_category().items()):
-        print(f"  {category:<10} {passed}/{total}")
+        print(f"  {category:<16} {passed}/{total}")
+
+    predicted = [item for item in report.outcomes if item.predicted_fail]
+    held = sum(1 for item in predicted if item.prediction_held)
+    print(f"\n  Case dự đoán trượt: {len(predicted)}, đoán đúng {held}/{len(predicted)}")
+
+    table, trace = write_run_artifacts(
+        report,
+        directory=ROOT / "eval" / "runs",
+        model=evaluator_settings.model or "?",
+        prompt_version=evaluator_settings.prompt_version,
+        quality_bar=GOLDEN_PASS_TARGET,
+    )
     print(f"\nTỔNG: {report.passed}/{report.total} case ĐẠT = {report.pass_rate:.1%}")
-    print("NGƯỠNG NHÓM:", f"{GOLDEN_PASS_TARGET:.0%}")
+    print("QUALITY BAR:", f"{GOLDEN_PASS_TARGET:.0%}")
     print("GOLDEN_GATE:", "PASS" if report.pass_rate >= GOLDEN_PASS_TARGET else "FAIL")
+    print(f"Đã ghi: {table.relative_to(ROOT)} · {trace.relative_to(ROOT)}")
     return 0 if report.pass_rate >= GOLDEN_PASS_TARGET else 1
 
 

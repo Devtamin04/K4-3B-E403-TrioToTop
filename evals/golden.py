@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -28,11 +29,15 @@ class GoldenCase(BaseModel):
     id: str = Field(min_length=1)
     category: str = Field(min_length=1)
     message: str = Field(min_length=1)
+    grid: str = ""
     prior_covered: list[str] = Field(default_factory=list)
     expect_action: Action | None = None
     expect_target: str | None = None
     forbid_finish: bool = False
+    forbid_halt: bool = False
     reply_must_not_contain: list[str] = Field(default_factory=list)
+    expect_fail: str = ""
+    """Lý do nhóm dự đoán case này trượt; để trống nghĩa là kỳ vọng ĐẠT."""
     note: str = ""
 
 
@@ -44,10 +49,19 @@ class CaseOutcome:
     target: str | None
     reply: str
     failures: tuple[str, ...]
+    message: str = ""
+    grid: str = ""
+    predicted_fail: bool = False
 
     @property
     def passed(self) -> bool:
         return not self.failures
+
+    @property
+    def prediction_held(self) -> bool:
+        """Nhóm đoán trượt và nó trượt thật, hoặc đoán đạt và nó đạt."""
+
+        return self.predicted_fail != self.passed
 
 
 @dataclass(frozen=True, slots=True)
@@ -115,6 +129,8 @@ def run_case(
     failures: list[str] = []
     if case.forbid_finish and decision.action is Action.FINISH:
         failures.append("kết thúc phiên sớm khi chưa đủ căn cứ")
+    if case.forbid_halt and decision.action is Action.HALT:
+        failures.append("bỏ cuộc dù người học vẫn đang tham gia")
     if case.expect_action is not None and decision.action is not case.expect_action:
         failures.append(f"action={decision.action.value}, cần {case.expect_action.value}")
     if case.expect_target is not None:
@@ -133,6 +149,9 @@ def run_case(
         target=decision.target.id if decision.target else None,
         reply=reply,
         failures=tuple(failures),
+        message=case.message,
+        grid=case.grid,
+        predicted_fail=bool(case.expect_fail),
     )
 
 
@@ -142,3 +161,78 @@ def build_report(outcomes: list[CaseOutcome]) -> GoldenReport:
         passed=sum(1 for item in outcomes if item.passed),
         outcomes=outcomes,
     )
+
+
+def write_run_artifacts(
+    report: GoldenReport,
+    *,
+    directory: Path,
+    model: str,
+    prompt_version: str,
+    quality_bar: float,
+) -> tuple[Path, Path]:
+    """Ghi bảng kết quả và trace vào repo để chấm R4."""
+
+    directory.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
+
+    trace_path = directory / f"{stamp}-trace.json"
+    trace_path.write_text(
+        json.dumps(
+            {
+                "run_at": stamp,
+                "model": model,
+                "prompt_version": prompt_version,
+                "quality_bar": quality_bar,
+                "total": report.total,
+                "passed": report.passed,
+                "pass_rate": round(report.pass_rate, 4),
+                "cases": [
+                    {
+                        "case_id": item.case_id,
+                        "category": item.category,
+                        "grid": item.grid,
+                        "input": item.message,
+                        "action": item.action,
+                        "target": item.target,
+                        "output": item.reply,
+                        "passed": item.passed,
+                        "predicted_fail": item.predicted_fail,
+                        "failures": list(item.failures),
+                    }
+                    for item in report.outcomes
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    table_path = directory / f"{stamp}-results.md"
+    lines = [
+        f"# Lượt đo golden set — {stamp}",
+        "",
+        f"- Model: `{model}` · prompt: `{prompt_version}`",
+        f"- Quality bar: **{quality_bar:.0%}**",
+        f"- Kết quả: **{report.passed}/{report.total} = {report.pass_rate:.1%}** "
+        f"→ {'ĐẠT' if report.pass_rate >= quality_bar else 'CHƯA ĐẠT'}",
+        "",
+        "| case | input | output | đạt? |",
+        "|---|---|---|---|",
+    ]
+    for item in report.outcomes:
+        verdict = "ĐẠT" if item.passed else f"KHÔNG — {'; '.join(item.failures)}"
+        lines.append(
+            f"| `{item.case_id}` | {_cell(item.message)} | "
+            f"{item.action} {item.target or ''} · {_cell(item.reply)} | {verdict} |"
+        )
+    table_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return table_path, trace_path
+
+
+def _cell(text: str, limit: int = 110) -> str:
+    flat = " ".join(text.split())
+    if len(flat) > limit:
+        flat = f"{flat[:limit]}…"
+    return flat.replace("|", "\\|")
