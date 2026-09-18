@@ -340,3 +340,5 @@ Context Window chưa"* — không hướng dẫn bấm nút nào.
 | 18/9 | Golden set mở rộng lên 32 case, thêm 6 case từ chatlog thật | Guide §2.6 yêu cầu case từ chatlog |
 | 18/9 | Thêm điều kiện dừng `HALT`/`EXHAUSTED` | Phiên chạy vô hạn khi học viên bế tắc |
 | 18/9 | Evaluator Safety V2: bằng chứng phải trích dẫn được | Phát hiện false-completion khi chạy lặp 5 lần |
+| 18/9 | Quyết định thêm chỉ dẫn "Chọn một chủ đề trước" khi nút bắt đầu bị khoá | Validation phiên 1: người thử bấm nút bị khoá 2 lần và không biết bước tiếp theo |
+| 18/9 | Quyết định thêm banner giải thích và gợi ý bước tiếp theo khi `HALT` | Validation phiên 2: người thử không hiểu vì sao hệ thống tự dừng và bị giảm lòng tin |
