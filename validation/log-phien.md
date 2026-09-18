@@ -31,14 +31,9 @@ sai / mất lòng tin) · **Nhẹ** (khó chịu, vẫn xong việc).
 
 **Người thử:** Nguyễn Huy Cương — học viên K4 — willing user đã khai ở CP1: **có**
 
-**Người điều phối:** Không ghi lại trong log gốc
+**Người điều phối:** Đoàn Phương Linh
 
-### Nhịp 2 — Context (trước khi mở app)
-
-Không ghi lại câu trả lời nguyên văn, vì vậy phần context này không được dùng làm bằng
-chứng cho kết luận.
-
-### Nhịp 4 — Quan sát thực tế
+###  Quan sát thực tế
 
 | Mốc | Quan sát |
 |---|---|
@@ -52,7 +47,7 @@ chứng cho kết luận.
 
 > *"Ủa nút này bấm không được à? Mình tưởng bấm đây trước."*
 
-### Nhịp 5 — Hỏi sau khi dùng (log nguyên văn)
+### Hỏi sau khi dùng (log nguyên văn)
 
 **1. Khó hiểu / khó chịu nhất?**
 
@@ -76,16 +71,7 @@ chứng cho kết luận.
 
 **Người điều phối:** Đoàn Phương Linh
 
-### Nhịp 2 — Context (trước khi mở app)
-
-Người điều phối đã hỏi:
-
-> *"Lần gần nhất học một khái niệm khó, bạn làm gì để chắc là mình hiểu?"*
-
-Câu trả lời của người thử không được ghi lại nguyên văn, vì vậy không dùng phần context
-này làm bằng chứng cho kết luận.
-
-### Nhịp 4 — Quan sát thực tế
+### Quan sát thực tế
 
 | Mốc | Quan sát |
 |---|---|
@@ -110,7 +96,7 @@ này làm bằng chứng cho kết luận.
 
 > *"Mình tưởng nó dạy mình chứ, hoá ra mình phải dạy nó à?"*
 
-### Nhịp 5 — Hỏi sau khi dùng (log nguyên văn)
+### Hỏi sau khi dùng (log nguyên văn)
 
 **1. Khó hiểu / khó chịu nhất?**
 
@@ -149,7 +135,7 @@ này làm bằng chứng cho kết luận.
 > hai lần gọi LLM. Đây là các quyết định sản phẩm đã biết, không phải kết luận trực tiếp
 > từ hai phiên validation trên.
 
-**4. Đưa vào backlog → slide 6**
+**4. Đưa vào backlog**
 
 > Ưu tiên nhập bằng giọng nói, dựa trên phản hồi của người thử phiên 1 rằng gõ dài gây
 > mệt. Lưu lịch sử phiên và màn hình tổng kết cuối phiên tiếp tục nằm trong backlog sản
