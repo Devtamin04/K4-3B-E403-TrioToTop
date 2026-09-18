@@ -8,10 +8,11 @@ from app.adapters.evaluator_llm import EvaluationOutputValidator
 from app.adapters.student_fake import DeterministicStudentGenerator
 from app.adapters.student_llm import LlmStudentGenerator
 from app.adapters.topics_yaml import YamlTopicRepository
-from app.composition import PROJECT_ROOT, build_evaluator, build_llm_client
+from app.composition import PROJECT_ROOT, build_evaluator, build_llm_client, build_student
 from app.config import ConfigurationError, EvaluatorSettings, StudentSettings
 from app.teachback.interfaces import StudentGenerator
 from app.teachback.models import EvaluationResult, TopicDefinition
+from evals.golden import build_report, load_golden_set, run_case
 from evals.metrics import calculate_metrics, provisional_gates_pass
 from evals.models import RegressionCase, load_dataset
 from evals.safety import calculate_safety_metrics, run_case_safety, safety_gate_passes
@@ -30,7 +31,7 @@ ROOT = Path(__file__).resolve().parent.parent
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run hidden-evaluator regressions")
     parser.add_argument("--mode", choices=("offline", "live"), default="offline")
-    parser.add_argument("--target", choices=("evaluator", "student"), default="evaluator")
+    parser.add_argument("--target", choices=("evaluator", "student", "golden"), default="evaluator")
     parser.add_argument(
         "--safety-runs",
         type=int,
@@ -41,9 +42,59 @@ def main() -> int:
 
     if arguments.safety_runs:
         return _run_safety(live=arguments.mode == "live", runs=arguments.safety_runs)
+    if arguments.target == "golden":
+        return _run_golden(live=arguments.mode == "live")
     if arguments.target == "student":
         return _run_student(live=arguments.mode == "live")
     return _run_evaluator(live=arguments.mode == "live")
+
+
+GOLDEN_PASS_TARGET = 0.80
+
+
+def _run_golden(*, live: bool) -> int:
+    cases = load_golden_set(ROOT / "evals" / "golden_set.yaml")
+    topic = YamlTopicRepository(ROOT / "knowledge").get("context_window")
+
+    if not live:
+        print("SKIPPED: bộ golden set cần --mode live để chạy qua evaluator thật")
+        return 0
+    try:
+        evaluator_settings = EvaluatorSettings.from_env()
+        student_settings = StudentSettings.from_env()
+    except ConfigurationError as error:
+        print(f"SKIPPED: chưa cấu hình evaluator: {error}")
+        return 0
+    if evaluator_settings.backend == "fixture":
+        print("SKIPPED: cần LLM_PROVIDER thật, không dùng fixture")
+        return 0
+
+    evaluator = build_evaluator(evaluator_settings)
+    student = build_student(student_settings, evaluator_settings)
+
+    outcomes = [
+        run_case(case=case, topic=topic, evaluator=evaluator, student=student) for case in cases
+    ]
+    report = build_report(outcomes)
+
+    print(f"{'case':<32} {'loại':<8} {'action':<10} {'target':<16} kết quả")
+    print("-" * 92)
+    for item in report.outcomes:
+        verdict = "ĐẠT" if item.passed else "KHÔNG ĐẠT"
+        print(
+            f"{item.case_id:<32} {item.category:<8} {item.action:<10} "
+            f"{str(item.target or '-'):<16} {verdict}"
+        )
+        for reason in item.failures:
+            print(f"    ↳ {reason}")
+
+    print()
+    for category, (passed, total) in sorted(report.by_category().items()):
+        print(f"  {category:<10} {passed}/{total}")
+    print(f"\nTỔNG: {report.passed}/{report.total} case ĐẠT = {report.pass_rate:.1%}")
+    print("NGƯỠNG NHÓM:", f"{GOLDEN_PASS_TARGET:.0%}")
+    print("GOLDEN_GATE:", "PASS" if report.pass_rate >= GOLDEN_PASS_TARGET else "FAIL")
+    return 0 if report.pass_rate >= GOLDEN_PASS_TARGET else 1
 
 
 def _run_safety(*, live: bool, runs: int) -> int:

@@ -1,0 +1,103 @@
+id: context_window
+version: "1.0.0"
+title: Context Window của LLM
+opening_question: >-
+  Mình hay nghe nói tới "context window" khi dùng AI nhưng chưa rõ nó là gì.
+  Bạn giải thích giúp mình nhé?
+completion_message: >-
+  Cảm ơn bạn. Giờ mình đã hiểu context window là gì, nó chứa những gì và điều gì xảy ra
+  khi vượt quá giới hạn đó.
+
+# Curated from local course transcript references T06-149..T06-150.
+concepts:
+  - id: token_unit
+    required: true
+    priority: 10
+    description: >-
+      Giới hạn của context window được đo bằng token, đơn vị văn bản của mô hình, chứ không
+      phải bằng số từ hay số ký tự.
+    probe_question: >-
+      Giới hạn của context window được đo bằng đơn vị nào vậy bạn?
+    clarify_question: >-
+      Bạn nói giới hạn tính theo "độ dài"; cụ thể người ta đếm bằng đơn vị gì?
+
+  - id: working_memory
+    required: true
+    priority: 20
+    description: >-
+      Context window là bộ nhớ làm việc tạm thời cho một lượt sinh văn bản, không phải nơi
+      lưu trữ lâu dài.
+    probe_question: >-
+      Phần thông tin nằm trong context window được giữ lại tạm thời hay lưu vĩnh viễn?
+    clarify_question: >-
+      Bạn nói mô hình "nhớ" được nội dung; cái nhớ đó tồn tại trong bao lâu?
+
+  - id: window_contents
+    required: true
+    priority: 30
+    description: >-
+      Context window chứa toàn bộ phần đầu vào gồm chỉ dẫn, lịch sử hội thoại và tài liệu
+      đưa vào, chứ không chỉ riêng câu trả lời.
+    probe_question: >-
+      Những thành phần nào cùng chiếm chỗ trong context window vậy bạn?
+    clarify_question: >-
+      Bạn nhắc tới "nội dung đưa vào"; nó gồm những phần nào?
+
+  - id: overflow_behavior
+    required: true
+    priority: 40
+    description: >-
+      Khi vượt quá giới hạn, phần nội dung cũ bị đẩy ra khỏi cửa sổ nên mô hình không còn
+      dùng được thông tin đó nữa.
+    probe_question: >-
+      Nếu cuộc hội thoại dài vượt quá giới hạn thì chuyện gì xảy ra với phần đầu?
+    clarify_question: >-
+      Bạn nói mô hình "quên"; phần bị quên đó biến mất theo cơ chế nào?
+
+misconceptions:
+  - id: M01
+    concept_id: working_memory
+    priority: 10
+    incorrect_claim: >-
+      Context window là nơi lưu trữ vĩnh viễn mọi cuộc trò chuyện của người dùng.
+    correction: >-
+      Đó là bộ nhớ tạm thời cho một lượt xử lý; muốn lưu lâu dài phải dùng cơ sở dữ liệu
+      bên ngoài.
+    challenge_question: >-
+      Nếu context window lưu vĩnh viễn mọi cuộc trò chuyện, thì vì sao mở một phiên chat mới
+      mô hình lại không nhớ gì về phiên cũ?
+
+  - id: M02
+    concept_id: window_contents
+    priority: 20
+    incorrect_claim: >-
+      Context window chỉ quyết định độ dài câu trả lời mà mô hình tạo ra.
+    correction: >-
+      Giới hạn áp cho cả phần đầu vào lẫn phần sinh ra, không riêng câu trả lời.
+    challenge_question: >-
+      Nếu giới hạn chỉ áp cho câu trả lời, thì vì sao dán một tài liệu rất dài vào lại có thể
+      gây lỗi vượt giới hạn dù bạn chỉ xin một câu trả lời ngắn?
+
+  - id: M03
+    concept_id: token_unit
+    priority: 30
+    incorrect_claim: >-
+      Context window chính là số tham số dùng để huấn luyện mô hình.
+    correction: >-
+      Số tham số là kích thước của mô hình, còn context window là lượng token xử lý được
+      trong một lượt; đây là hai đại lượng khác nhau.
+    challenge_question: >-
+      Nếu context window và số tham số là một, thì vì sao cùng một mô hình lại có thể được
+      cung cấp ở nhiều mức giới hạn độ dài khác nhau?
+
+  - id: M04
+    concept_id: overflow_behavior
+    priority: 40
+    incorrect_claim: >-
+      Khi vượt quá context window thì máy tính bị treo hoặc hỏng phần cứng.
+    correction: >-
+      Vượt giới hạn chỉ khiến phần nội dung cũ bị bỏ ra khỏi cửa sổ hoặc hệ thống báo lỗi,
+      không gây hỏng hóc phần cứng.
+    challenge_question: >-
+      Nếu vượt giới hạn làm hỏng máy, thì vì sao khi hội thoại quá dài ta chỉ thấy mô hình
+      quên phần đầu chứ máy vẫn chạy bình thường?
