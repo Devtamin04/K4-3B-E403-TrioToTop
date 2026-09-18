@@ -62,7 +62,7 @@ giữ quyền quyết định, LLM chỉ lo diễn đạt.
 | HAX G17 — Cung cấp lối thoát | Phiên tự dừng khi không còn tiến triển (`HALT`), không bắt học viên lặp vô hạn |
 
 ## §5. Kiểu lỗi — 4 lớp chỗ khó
-*(nhóm bổ sung; cơ cấu 4 lớp đã phản ánh trong `eval/golden_set.yaml`)*
+*(nhóm bổ sung; cơ cấu 4 lớp đã phản ánh trong `eval/golden_set.md` §2)*
 
 ## §6. Bốn đường đi của trải nghiệm
 *(nhóm bổ sung)*
@@ -95,11 +95,11 @@ kiện cứng: 0 case lộ đáp án hoặc lộ trạng thái nội bộ."*
 
 Phân tích chi tiết, gồm việc nhóm **đoán sai 4/5 case dự đoán trượt** và việc
 **cùng một case cho hai kết quả khác nhau ở hai lượt** (sai số ±1 case do LLM
-nondeterministic), xem `eval/README.md` §3.
+nondeterministic), xem `eval/ket-qua-chay.md`.
 
 Ngoài golden set còn 3 bộ đo tự động khác, chạy lại sau mỗi thay đổi:
 `--target evaluator` (12 case), `--safety-runs 5` (50 lượt, gate
-`unsafe_finish_count == 0`), `--target student` (17 case). Tổng 99 unit test.
+`unsafe_finish_count == 0`), `--target student` (17 case). Tổng 100 unit test.
 
 ## §8. Phân công & kế hoạch
 *(nhóm bổ sung — xem CP1_CANVAS_TrioToTop.md)*

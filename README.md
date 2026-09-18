@@ -43,7 +43,7 @@ làm hai việc: đọc hiểu lời học viên, và diễn đạt câu hỏi.
 | **`eval/`** | **Golden set + kết quả các lượt đo** (chỗ chấm R4) |
 | `logs/traces/` | Trace lời gọi AI từng lượt đo |
 | `eval_harness/` | Code chạy đo (đọc dữ liệu từ `eval/`) |
-| `tests/` | 99 unit + integration test |
+| `tests/` | 100 unit + integration test (chạy offline, không gọi LLM) |
 
 ## Đo chất lượng
 
