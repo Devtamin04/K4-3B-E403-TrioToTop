@@ -84,7 +84,7 @@ dẫn nguồn bằng `turn_id`). Phủ đủ 4 lớp chỗ khó theo guide §2.5
 **Quality bar (chốt trước lượt đo đầu):** *"Đạt khi ≥80% case qua bộ, và điều
 kiện cứng: 0 case lộ đáp án hoặc lộ trạng thái nội bộ."*
 
-**Kết quả các lượt chạy:**
+**Kết quả các lượt chạy** (bảng đầy đủ: `eval/ket-qua-chay.md`):
 
 | Lượt | Ngày | Bộ đề | Kết quả | Gate |
 |---|---|---|---|---|

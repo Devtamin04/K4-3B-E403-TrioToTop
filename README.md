@@ -55,8 +55,9 @@ uv run python -m eval_harness.runner --mode live --safety-runs 5      # gate an 
 uv run python -m eval_harness.runner --mode live --target student     # 17 case AI Student
 ```
 
-Lượt đo mới nhất: **25/26 = 96.2%** (quality bar 80%). Phân tích đầy đủ, gồm cả
-việc nhóm đoán sai 4/5 case dự đoán trượt, xem [`eval/README.md`](eval/README.md).
+Lượt đo mới nhất: **31/32 = 96.9%** (quality bar 80%).
+Bảng mọi lượt chạy: [`eval/ket-qua-chay.md`](eval/ket-qua-chay.md) ·
+phân tích nguyên nhân: [`eval/README.md`](eval/README.md).
 
 Thiết kế, phần nào thật phần nào còn mock: [`spec.md`](spec.md).
 

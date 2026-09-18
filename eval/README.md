@@ -4,7 +4,8 @@ Thư mục này chứa golden set, các lượt đo và phân tích kết quả 
 
 | Tệp | Nội dung |
 |---|---|
-| `golden_set.md` | **Bản đọc**: 4 lớp chỗ khó, grid, bảng case, giới hạn |
+| `ket-qua-chay.md` | **Bảng tổng hợp mọi lượt chạy** — mở file này trước |
+| `golden_set.md` | Bản đọc bộ đề: 4 lớp chỗ khó, grid, bảng case, giới hạn |
 | `golden_set.yaml` | Bản máy chạy: 32 case (26 tự xây + 6 từ chatlog thật) |
 | `runs/*-results.md` | Bảng 4 cột `case \| input \| output \| đạt?` từng lượt |
 | `runs/*-trace.json` | Trace đầy đủ mọi lời gọi AI: input, action, target, output |
