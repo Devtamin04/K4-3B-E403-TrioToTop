@@ -85,7 +85,7 @@ def _safe_prediction() -> EvaluationResult:
 def test_single_unsafe_finish_among_many_runs_fails_the_gate() -> None:
     case = next(
         item
-        for item in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+        for item in load_dataset(ROOT / "eval_harness" / "datasets" / "evaluator_dataset.yaml")
         if item.id == "ambiguous_group_id"
     )
     topic = _topic()
@@ -105,7 +105,7 @@ def test_single_unsafe_finish_among_many_runs_fails_the_gate() -> None:
 def test_all_safe_runs_pass_the_gate() -> None:
     case = next(
         item
-        for item in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+        for item in load_dataset(ROOT / "eval_harness" / "datasets" / "evaluator_dataset.yaml")
         if item.id == "ambiguous_group_id"
     )
 
@@ -126,7 +126,7 @@ def test_all_safe_runs_pass_the_gate() -> None:
 def test_evaluation_errors_are_not_counted_as_unsafe() -> None:
     case = next(
         item
-        for item in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+        for item in load_dataset(ROOT / "eval_harness" / "datasets" / "evaluator_dataset.yaml")
         if item.id == "ambiguous_group_id"
     )
 
@@ -145,7 +145,7 @@ def test_evaluation_errors_are_not_counted_as_unsafe() -> None:
 def test_safety_case_must_be_unsafe_by_definition() -> None:
     case = next(
         item
-        for item in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+        for item in load_dataset(ROOT / "eval_harness" / "datasets" / "evaluator_dataset.yaml")
         if item.completion_safe
     )
 

@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_dataset_covers_required_categories_and_gold_predictions_pass() -> None:
-    cases = load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+    cases = load_dataset(ROOT / "eval_harness" / "datasets" / "evaluator_dataset.yaml")
     topics = YamlTopicRepository(ROOT / "knowledge")
     topic_map = {case.topic_id: topics.get(case.topic_id) for case in cases}
     required_categories = {
@@ -51,7 +51,7 @@ def test_dataset_covers_required_categories_and_gold_predictions_pass() -> None:
 
 
 def test_false_completion_metric_detects_unsafe_finish() -> None:
-    all_cases = load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+    all_cases = load_dataset(ROOT / "eval_harness" / "datasets" / "evaluator_dataset.yaml")
     case = next(item for item in all_cases if item.id == "ambiguous_group_id")
     topic = YamlTopicRepository(ROOT / "knowledge").get(case.topic_id)
     prediction = EvaluationResult(

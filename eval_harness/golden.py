@@ -183,16 +183,18 @@ def write_run_artifacts(
     report: GoldenReport,
     *,
     directory: Path,
+    trace_directory: Path,
     model: str,
     prompt_version: str,
     quality_bar: float,
 ) -> tuple[Path, Path]:
-    """Ghi bảng kết quả và trace vào repo để chấm R4."""
+    """Ghi bảng kết quả vào eval/ và trace lời gọi AI vào logs/traces/."""
 
     directory.mkdir(parents=True, exist_ok=True)
+    trace_directory.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
 
-    trace_path = directory / f"{stamp}-trace.json"
+    trace_path = trace_directory / f"{stamp}-trace.json"
     trace_path.write_text(
         json.dumps(
             {

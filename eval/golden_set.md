@@ -1,7 +1,6 @@
 # Golden set — TeachBack AI
 
-Chủ đề đo: **Context Window**. File máy chạy: [`golden_set.yaml`](golden_set.yaml).
-File này là bản để người đọc — TA soát độ phủ và nhóm soát lại tiêu chí.
+Chủ đề đo: **Context Window**. 
 
 - **32 case**, trong đó **6 case phát triển từ chatlog thật** (`data/vlearn-pack/chatlog/tutor_turns.csv`,
   dẫn nguồn bằng `turn_id`), 26 case nhóm tự xây.
@@ -98,31 +97,3 @@ Cột `nguồn`: `chatlog` = phát triển từ câu hỏi thật, kèm `turn_id
 | C12 | tự xây | "vượt giới hạn thì nổ máy tính" | CHALLENGE `M04` |
 | C13 | tự xây | nửa đúng nửa sai: "giới hạn token… lưu vĩnh viễn vào RAM" | CHALLENGE `M01` |
 | C24 | tự xây | đúng ý overflow nhưng gọi đơn vị là "chữ cái" | CLARIFY `token_unit` *(dự đoán trượt)* |
-
-## 5. Case nhóm dự đoán trượt
-
-Guide khuyến khích bộ đề nhắm vào chỗ nhóm **chưa chắc**, không chỉ xác nhận chỗ
-đã mạnh. Năm case dưới được viết kèm lý do dự đoán trước khi chạy; kết quả và
-phân tích trong [`README.md`](README.md) §3.
-
-| # | Vì sao nhóm tin là sẽ trượt |
-|---|---|
-| C22 | Evaluator không có khái niệm giọng điệu, nên câu đùa bị coi là "chưa nói gì" |
-| C23 | Câu trộn 2 ngôn ngữ, nêu 3 ý cùng lúc — dễ bị ghi nhận thiếu |
-| C24 | Không có misconception curated cho lỗi sai đơn vị |
-| C25 | Con số 128k có sẵn trong ngữ cảnh, AI dễ nhắc lại |
-| C26 | Hệ thống không có bộ nhớ xuyên phiên, không phân biệt được thật/bịa |
-
-## 6. Giới hạn của bộ đề này
-
-Ghi thẳng để không ai hiểu nhầm phạm vi:
-
-- **Chỉ đo một lượt/case.** Phiên nhiều lượt liên tiếp, hoặc người học sửa sai
-  rồi sai lại, chưa có trong bộ.
-- **Chỉ một chủ đề** (`context_window`) trong 8 chủ đề đang có.
-- **Mới 6/10 case chatlog theo khuyến nghị guide §2.6.** Bốn case còn lại là nợ
-  cho lượt 2; chatlog có 178 lượt liên quan token/ngữ cảnh nên còn dư nguồn.
-- **Case chatlog là phát triển từ câu hỏi thật, không phải chép nguyên.** Câu
-  gốc là học viên hỏi tutor; ở TeachBack vai đảo lại nên phải viết lại cho hợp
-  ngữ cảnh dạy-lại. `turn_id` giữ để truy nguồn.
-- Chưa có vòng validation với người thật (mục 4.2 của guide, phần bonus).

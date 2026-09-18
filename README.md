@@ -41,6 +41,7 @@ làm hai việc: đọc hiểu lời học viên, và diễn đạt câu hỏi.
 | `app/api/`, `web/` | REST API và giao diện chat |
 | `knowledge/` | 8 chủ đề dạy học (YAML, curate từ transcript khoá) |
 | **`eval/`** | **Golden set + kết quả các lượt đo** (chỗ chấm R4) |
+| `logs/traces/` | Trace lời gọi AI từng lượt đo |
 | `eval_harness/` | Code chạy đo (đọc dữ liệu từ `eval/`) |
 | `tests/` | 99 unit + integration test |
 
@@ -55,9 +56,10 @@ uv run python -m eval_harness.runner --mode live --safety-runs 5      # gate an 
 uv run python -m eval_harness.runner --mode live --target student     # 17 case AI Student
 ```
 
-Lượt đo mới nhất: **31/32 = 96.9%** (quality bar 80%).
+Ba lượt đo: 96.2% · 96.9% · 93.8% (quality bar 80%, đều PASS) — chênh lệch là
+nhiễu của LLM, 30/32 case ổn định tuyệt đối.
 Bảng mọi lượt chạy: [`eval/ket-qua-chay.md`](eval/ket-qua-chay.md) ·
-phân tích nguyên nhân: [`eval/README.md`](eval/README.md).
+bộ đề: [`eval/golden_set.md`](eval/golden_set.md).
 
 Thiết kế, phần nào thật phần nào còn mock: [`spec.md`](spec.md).
 

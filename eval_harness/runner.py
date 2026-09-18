@@ -54,7 +54,7 @@ GOLDEN_PASS_TARGET = 0.80
 
 
 def _run_golden(*, live: bool) -> int:
-    cases = load_golden_set(ROOT / "eval" / "golden_set.yaml")
+    cases = load_golden_set(ROOT / "eval_harness" / "datasets" / "golden_set.yaml")
     topic = YamlTopicRepository(ROOT / "knowledge").get("context_window")
 
     if not live:
@@ -103,7 +103,8 @@ def _run_golden(*, live: bool) -> int:
 
     table, trace = write_run_artifacts(
         report,
-        directory=ROOT / "eval" / "runs",
+        directory=ROOT / "logs" / "runs",
+        trace_directory=ROOT / "logs" / "traces",
         model=evaluator_settings.model or "?",
         prompt_version=evaluator_settings.prompt_version,
         quality_bar=GOLDEN_PASS_TARGET,
@@ -118,7 +119,7 @@ def _run_golden(*, live: bool) -> int:
 def _run_safety(*, live: bool, runs: int) -> int:
     cases = [
         case
-        for case in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+        for case in load_dataset(ROOT / "eval_harness" / "datasets" / "evaluator_dataset.yaml")
         if not case.completion_safe
     ]
     topic_repository = YamlTopicRepository(ROOT / "knowledge")
@@ -166,7 +167,7 @@ def _run_safety(*, live: bool, runs: int) -> int:
 
 
 def _run_evaluator(*, live: bool) -> int:
-    cases = load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+    cases = load_dataset(ROOT / "eval_harness" / "datasets" / "evaluator_dataset.yaml")
     topic_repository = YamlTopicRepository(ROOT / "knowledge")
     topics = {case.topic_id: topic_repository.get(case.topic_id) for case in cases}
 
@@ -199,7 +200,7 @@ def _run_evaluator(*, live: bool) -> int:
 
 
 def _run_student(*, live: bool) -> int:
-    cases = load_student_dataset(ROOT / "eval" / "student_dataset.yaml")
+    cases = load_student_dataset(ROOT / "eval_harness" / "datasets" / "student_dataset.yaml")
     topic_repository = YamlTopicRepository(ROOT / "knowledge")
     topics = {case.topic_id: topic_repository.get(case.topic_id) for case in cases}
 

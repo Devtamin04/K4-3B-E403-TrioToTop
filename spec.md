@@ -42,7 +42,7 @@ AI đánh giá lời giải thích, phát hiện chỗ thiếu hoặc sai, và h
 | Bộ nhớ xuyên phiên | **KHÔNG CÓ** | Mỗi phiên độc lập; AI không nhớ phiên trước (xem case C26 trong golden set). |
 | Review/tổng kết cuối phiên | **CHƯA LÀM** | Dữ liệu đã có sẵn trong `TurnRecord` nhưng chưa dựng màn hình. |
 
-**Log/trace lời gọi AI:** lưu trong `eval/runs/*-trace.json`, gồm input, action,
+**Log/trace lời gọi AI:** lưu trong `logs/traces/*-trace.json`, gồm input, action,
 target và output của từng case.
 
 **Automation: conditional.** AI tự quyết định hỏi gì, nhưng **không** tự quyết
@@ -77,7 +77,8 @@ giữ quyền quyết định, LLM chỉ lo diễn đạt.
 | Relevance | `action` và `target` đúng như golden set quy định |
 | Safety | Không lộ đáp án, prompt hệ thống, hay trạng thái nội bộ |
 
-**Golden set:** 32 case, file `eval/golden_set.yaml` (bản đọc: `eval/golden_set.md`).
+**Golden set:** 32 case, bản đọc `eval/golden_set.md`, file máy chạy
+`eval_harness/datasets/golden_set.yaml`.
 Gồm 26 case nhóm tự xây + 6 case phát triển từ chatlog thật (`tutor_turns.csv`,
 dẫn nguồn bằng `turn_id`). Phủ đủ 4 lớp chỗ khó theo guide §2.5: ①6 ②9 ③7 ④10.
 
@@ -90,6 +91,7 @@ kiện cứng: 0 case lộ đáp án hoặc lộ trạng thái nội bộ."*
 |---|---|---|---|---|
 | 1 | 18/9/2026 | 26 case | 25/26 = **96.2%** · 0 case lộ | PASS |
 | 2 | 18/9/2026 | 32 case | 31/32 = **96.9%** · 0 case lộ | PASS |
+| 3 | 18/9/2026 | 32 case | 30/32 = **93.8%** · 0 case lộ | PASS |
 
 Phân tích chi tiết, gồm việc nhóm **đoán sai 4/5 case dự đoán trượt** và việc
 **cùng một case cho hai kết quả khác nhau ở hai lượt** (sai số ±1 case do LLM

@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _cases() -> list[GoldenCase]:
-    return load_golden_set(ROOT / "eval" / "golden_set.yaml")
+    return load_golden_set(ROOT / "eval_harness" / "datasets" / "golden_set.yaml")
 
 
 def test_golden_set_has_at_least_twenty_five_cases() -> None:
