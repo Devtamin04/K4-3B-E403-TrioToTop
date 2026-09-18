@@ -1,0 +1,117 @@
+id: llm_limits_rag_finetuning
+version: "1.0.0"
+title: LLM Limits, Tool Calling, RAG and Fine-tuning
+opening_question: >-
+  Mình đang phân vân khi nào thì một bài toán dùng thẳng LLM được, khi nào phải lắp thêm thứ khác.
+  Bạn giải thích giúp mình nhé?
+completion_message: >-
+  Cảm ơn bạn. Giờ mình đã phân biệt được các giới hạn của LLM và khi nào nên dùng tool, RAG
+  hay fine-tuning.
+
+# Curated from local course transcript references T03-034..T03-036, T03-119
+# and T06-147..T06-150. Trade-offs are kept as the session framed them: choices
+# that depend on the situation, not fixed rules.
+concepts:
+  - id: knowledge_cutoff
+    required: true
+    priority: 10
+    description: >-
+      A model's knowledge stops at the point its training data ends, so it cannot know events
+      that happened afterwards.
+    probe_question: >-
+      Nếu hỏi mô hình về một sự kiện vừa xảy ra tuần trước, nó có trả lời đúng được không, vì sao?
+    clarify_question: >-
+      Bạn nói mô hình "không biết" thông tin mới; giới hạn đó đến từ đâu vậy?
+
+  - id: private_data_gap
+    required: true
+    priority: 20
+    description: >-
+      Internal or organization-specific material was never in the training data, so the model
+      cannot answer from it without being given that material.
+    probe_question: >-
+      Muốn chatbot trả lời đúng quy định nội bộ của một công ty cụ thể, khó khăn đầu tiên là gì?
+    clarify_question: >-
+      Chỗ bạn nói mô hình "chưa có dữ liệu đó", cụ thể là loại dữ liệu nào nó thiếu?
+
+  - id: tool_calling
+    required: true
+    priority: 30
+    description: >-
+      For tasks with an exact answer, the model can recognize the intent, extract the arguments
+      and call an external function instead of producing the result itself.
+    probe_question: >-
+      Với những tác vụ cần kết quả chính xác tuyệt đối như tính toán, có cách nào tốt hơn là để mô hình tự trả lời không?
+    clarify_question: >-
+      Bạn nói mô hình "gọi ra bên ngoài"; nó cần xác định được những gì thì mới gọi đúng?
+
+  - id: rag
+    required: true
+    priority: 40
+    description: >-
+      Relevant documents are retrieved and placed into the context so the model answers by
+      reasoning over supplied text rather than from memory.
+    probe_question: >-
+      Khi tài liệu nội bộ không nằm trong dữ liệu huấn luyện, làm sao để mô hình vẫn trả lời dựa trên tài liệu đó?
+    clarify_question: >-
+      Bạn nói "đưa tài liệu vào cho mô hình"; đưa vào lúc nào và mô hình dùng nó ra sao?
+
+  - id: finetuning_tradeoff
+    required: true
+    priority: 50
+    description: >-
+      Fine-tuning steers a model toward specific data but requires data work and tends to cost
+      generalization, so it is a trade-off rather than a default choice.
+    probe_question: >-
+      Fine-tuning nghe có vẻ mạnh hơn; vậy tại sao không phải lúc nào cũng nên chọn nó?
+    clarify_question: >-
+      Bạn nói fine-tuning "tốn công"; ngoài công sức thì mô hình còn đánh đổi điều gì nữa không?
+
+misconceptions:
+  - id: M01
+    concept_id: finetuning_tradeoff
+    priority: 10
+    incorrect_claim: >-
+      Fine-tuning is always the best option because it makes the model smarter overall.
+    correction: >-
+      Fine-tuning specializes a model and usually reduces its general capability, so it suits
+      narrow domains rather than every situation.
+    challenge_question: >-
+      Nếu fine-tune luôn làm mô hình giỏi hơn, thì sau khi tune sâu vào một lĩnh vực hẹp, khả năng làm
+      các tác vụ chung của nó sẽ thay đổi thế nào?
+
+  - id: M02
+    concept_id: rag
+    priority: 20
+    incorrect_claim: >-
+      RAG permanently teaches the documents to the model, the same way training does.
+    correction: >-
+      RAG supplies documents at answering time through the context; the model's weights are
+      unchanged.
+    challenge_question: >-
+      Nếu RAG thực sự dạy luôn tài liệu vào mô hình, thì khi bỏ hệ thống truy xuất đi mô hình vẫn trả lời
+      đúng tài liệu nội bộ chứ?
+
+  - id: M03
+    concept_id: tool_calling
+    priority: 30
+    incorrect_claim: >-
+      A capable enough LLM never needs external tools because it can compute anything itself.
+    correction: >-
+      Delegating exact tasks to a function gives reliable results that generation alone does not
+      guarantee.
+    challenge_question: >-
+      Với một phép tính cần đúng tuyệt đối, kết quả do mô hình tự sinh ra và kết quả do một hàm tính toán
+      trả về khác nhau ở điểm nào về mặt đảm bảo?
+
+  - id: M04
+    concept_id: knowledge_cutoff
+    priority: 40
+    incorrect_claim: >-
+      An LLM updates its own knowledge automatically as new events happen in the world.
+    correction: >-
+      The model's knowledge is fixed at training time; newer information must be brought in from
+      outside, for example by search or retrieval.
+    challenge_question: >-
+      Nếu mô hình tự cập nhật kiến thức theo thời gian, thì vì sao người ta vẫn phải lắp thêm công cụ tìm kiếm
+      cho nó khi cần thông tin mới?

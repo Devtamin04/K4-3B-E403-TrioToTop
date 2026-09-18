@@ -1,0 +1,106 @@
+id: transformer_attention
+version: "1.0.0"
+title: Transformer and Self-Attention
+opening_question: >-
+  Mình nghe nói Transformer là kiến trúc nền của các LLM hiện nay, nhưng chưa hình dung
+  được nó xử lý một câu như thế nào. Bạn giảng lại cho mình nhé?
+completion_message: >-
+  Cảm ơn bạn. Giờ mình đã hiểu Transformer biểu diễn và liên kết các token ra sao, cũng như
+  vì sao cơ chế nhìn song song lại quan trọng.
+
+# Curated from local course transcript references T06-126..T06-133.
+# Definitions stay at the conceptual level taught in the session and avoid
+# implementation details the transcript does not establish.
+concepts:
+  - id: embedding
+    required: true
+    priority: 10
+    description: >-
+      Each token is converted into a vector so that it has a position in a mathematical
+      space and can be computed with.
+    probe_question: >-
+      Sau khi văn bản được tách thành token, mô hình phải làm gì với các token đó để tính toán được?
+    clarify_question: >-
+      Bạn nói mô hình "biểu diễn" token; vậy nó chuyển token thành dạng gì để tính toán được?
+
+  - id: self_attention
+    required: true
+    priority: 20
+    description: >-
+      Each token looks at the other tokens and scores how related they are, so the model can
+      resolve which earlier token a word refers to.
+    probe_question: >-
+      Khi trong câu có một đại từ như "nó", mô hình dựa vào cơ chế nào để biết "nó" chỉ cái gì?
+    clarify_question: >-
+      Chỗ bạn nói các token "liên hệ với nhau", cụ thể mỗi token làm gì với những token còn lại?
+
+  - id: query_key_value
+    required: true
+    priority: 30
+    description: >-
+      Attention compares a query against the keys of other tokens to decide how much of each
+      token's value to use.
+    probe_question: >-
+      Trong cơ chế attention có ba thành phần Q, K, V; vai trò của từng cái là gì vậy bạn?
+    clarify_question: >-
+      Bạn có thể nói rõ query, key và value khác nhau ở chỗ nào không?
+
+  - id: parallel_processing
+    required: true
+    priority: 40
+    description: >-
+      Unlike sequential architectures, a Transformer lets all tokens attend to one another at
+      the same time rather than passing information step by step.
+    probe_question: >-
+      Transformer xử lý các token trong câu theo thứ tự lần lượt hay cùng lúc, và điều đó có lợi gì?
+    clarify_question: >-
+      Ý bạn nói mô hình xử lý "nhanh hơn" là do cách nó duyệt qua các token khác thế nào?
+
+  - id: similarity_score
+    required: true
+    priority: 50
+    description: >-
+      The comparison produces a score showing how strongly two tokens relate, and the highest
+      score decides which token is used as the reference.
+    probe_question: >-
+      Sau khi các token nhìn nhau, mô hình dựa vào đâu để chọn ra token liên quan nhất?
+    clarify_question: >-
+      Bạn nói mô hình "chọn được" token đúng; nó so sánh dựa trên cái gì để chọn?
+
+misconceptions:
+  - id: M01
+    concept_id: self_attention
+    priority: 10
+    incorrect_claim: >-
+      Self-attention means the model reads the sentence word by word from left to right and
+      remembers the previous word.
+    correction: >-
+      Every token attends to all the other tokens at once; reading strictly in sequence is how
+      earlier architectures such as RNN or LSTM worked.
+    challenge_question: >-
+      Nếu mô hình chỉ đọc lần lượt từng từ và nhớ từ phía trước, thì với một văn bản rất dài nó sẽ gặp
+      vấn đề gì mà Transformer lại tránh được?
+
+  - id: M02
+    concept_id: embedding
+    priority: 20
+    incorrect_claim: >-
+      Embedding stores the dictionary meaning of a word as text inside the model.
+    correction: >-
+      Embedding places a token as a vector in a mathematical space so it can be computed with,
+      rather than storing a textual definition.
+    challenge_question: >-
+      Nếu mô hình lưu thẳng nghĩa của từ dưới dạng chữ, thì nó thực hiện các phép tính trên nghĩa đó
+      bằng cách nào?
+
+  - id: M03
+    concept_id: parallel_processing
+    priority: 30
+    incorrect_claim: >-
+      Transformer is faster only because it runs on more powerful hardware.
+    correction: >-
+      The speed comes from the architecture itself allowing tokens to be processed in parallel,
+      not merely from faster hardware.
+    challenge_question: >-
+      Nếu chỉ do phần cứng mạnh hơn, thì chạy kiến trúc tuần tự cũ trên đúng phần cứng đó có cho kết quả
+      tương đương không, và vì sao?
