@@ -12,18 +12,18 @@ from app.composition import PROJECT_ROOT, build_evaluator, build_llm_client, bui
 from app.config import ConfigurationError, EvaluatorSettings, StudentSettings
 from app.teachback.interfaces import StudentGenerator
 from app.teachback.models import EvaluationResult, TopicDefinition
-from evals.golden import build_report, load_golden_set, run_case, write_run_artifacts
-from evals.metrics import calculate_metrics, provisional_gates_pass
-from evals.models import RegressionCase, load_dataset
-from evals.safety import calculate_safety_metrics, run_case_safety, safety_gate_passes
-from evals.student_judge import AdversarialJudgement, StudentJudgement, StudentResponseJudge
-from evals.student_metrics import (
+from eval_harness.golden import build_report, load_golden_set, run_case, write_run_artifacts
+from eval_harness.metrics import calculate_metrics, provisional_gates_pass
+from eval_harness.models import RegressionCase, load_dataset
+from eval_harness.safety import calculate_safety_metrics, run_case_safety, safety_gate_passes
+from eval_harness.student_judge import AdversarialJudgement, StudentJudgement, StudentResponseJudge
+from eval_harness.student_metrics import (
     StudentCaseOutcome,
     calculate_student_metrics,
     evaluate_hidden_state_leak,
     student_gates_pass,
 )
-from evals.student_models import CaseType, StudentCase, load_student_dataset
+from eval_harness.student_models import CaseType, StudentCase, load_student_dataset
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -113,7 +113,9 @@ def _run_golden(*, live: bool) -> int:
 
 def _run_safety(*, live: bool, runs: int) -> int:
     cases = [
-        case for case in load_dataset(ROOT / "evals" / "dataset.yaml") if not case.completion_safe
+        case
+        for case in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+        if not case.completion_safe
     ]
     topic_repository = YamlTopicRepository(ROOT / "knowledge")
     topics = {case.topic_id: topic_repository.get(case.topic_id) for case in cases}
@@ -160,7 +162,7 @@ def _run_safety(*, live: bool, runs: int) -> int:
 
 
 def _run_evaluator(*, live: bool) -> int:
-    cases = load_dataset(ROOT / "evals" / "dataset.yaml")
+    cases = load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
     topic_repository = YamlTopicRepository(ROOT / "knowledge")
     topics = {case.topic_id: topic_repository.get(case.topic_id) for case in cases}
 
@@ -193,7 +195,7 @@ def _run_evaluator(*, live: bool) -> int:
 
 
 def _run_student(*, live: bool) -> int:
-    cases = load_student_dataset(ROOT / "evals" / "student_dataset.yaml")
+    cases = load_student_dataset(ROOT / "eval" / "student_dataset.yaml")
     topic_repository = YamlTopicRepository(ROOT / "knowledge")
     topics = {case.topic_id: topic_repository.get(case.topic_id) for case in cases}
 

@@ -29,7 +29,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["app", "evals"]
+packages = ["app", "eval_harness"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -2,6 +2,8 @@
 .env
 data/
 cons.MD
+02-guide.md
+03-ai-spec-template.md
 __pycache__/
 .pytest_cache/
 .mypy_cache/

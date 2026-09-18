@@ -4,8 +4,8 @@ from dataclasses import asdict, dataclass, field
 
 from app.adapters.student_llm import StudentOutputValidator, StudentResponseRejected
 from app.teachback.models import TopicDefinition
-from evals.student_judge import AdversarialJudgement, StudentJudgement
-from evals.student_models import CaseType, StudentCase
+from eval_harness.student_judge import AdversarialJudgement, StudentJudgement
+from eval_harness.student_models import CaseType, StudentCase
 
 
 @dataclass(frozen=True, slots=True)

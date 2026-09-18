@@ -22,8 +22,8 @@ from app.teachback.models import (
     TeachBackState,
     TopicDefinition,
 )
-from evals.models import load_dataset
-from evals.safety import calculate_safety_metrics, run_case_safety, safety_gate_passes
+from eval_harness.models import load_dataset
+from eval_harness.safety import calculate_safety_metrics, run_case_safety, safety_gate_passes
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -85,7 +85,7 @@ def _safe_prediction() -> EvaluationResult:
 def test_single_unsafe_finish_among_many_runs_fails_the_gate() -> None:
     case = next(
         item
-        for item in load_dataset(ROOT / "evals" / "dataset.yaml")
+        for item in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
         if item.id == "ambiguous_group_id"
     )
     topic = _topic()
@@ -105,7 +105,7 @@ def test_single_unsafe_finish_among_many_runs_fails_the_gate() -> None:
 def test_all_safe_runs_pass_the_gate() -> None:
     case = next(
         item
-        for item in load_dataset(ROOT / "evals" / "dataset.yaml")
+        for item in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
         if item.id == "ambiguous_group_id"
     )
 
@@ -126,7 +126,7 @@ def test_all_safe_runs_pass_the_gate() -> None:
 def test_evaluation_errors_are_not_counted_as_unsafe() -> None:
     case = next(
         item
-        for item in load_dataset(ROOT / "evals" / "dataset.yaml")
+        for item in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
         if item.id == "ambiguous_group_id"
     )
 
@@ -144,7 +144,9 @@ def test_evaluation_errors_are_not_counted_as_unsafe() -> None:
 
 def test_safety_case_must_be_unsafe_by_definition() -> None:
     case = next(
-        item for item in load_dataset(ROOT / "evals" / "dataset.yaml") if item.completion_safe
+        item
+        for item in load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
+        if item.completion_safe
     )
 
     with pytest.raises(ValueError, match="completion_safe"):

@@ -12,7 +12,7 @@ Chạy lại:
 
 ```bash
 set -a; source .env; set +a
-uv run python -m evals.runner --mode live --target golden
+uv run python -m eval_harness.runner --mode live --target golden
 ```
 
 ---

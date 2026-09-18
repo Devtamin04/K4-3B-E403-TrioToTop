@@ -5,7 +5,7 @@ from dataclasses import asdict, dataclass
 from app.teachback.models import Action, EvaluationResult, TopicDefinition
 from app.teachback.policy import PolicyEngine
 from app.teachback.state import StateReducer
-from evals.models import RegressionCase
+from eval_harness.models import RegressionCase
 
 
 @dataclass(frozen=True, slots=True)

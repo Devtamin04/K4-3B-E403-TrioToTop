@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from app.adapters.topics_yaml import YamlTopicRepository
-from evals.golden import CaseOutcome, GoldenCase, build_report, load_golden_set
+from eval_harness.golden import CaseOutcome, GoldenCase, build_report, load_golden_set
 
 ROOT = Path(__file__).resolve().parents[2]
 

@@ -5,14 +5,14 @@ from pathlib import Path
 from app.adapters.evaluator_llm import EvaluationOutputValidator
 from app.adapters.topics_yaml import YamlTopicRepository
 from app.teachback.models import EvaluationResult, Evidence, Judgment
-from evals.metrics import calculate_metrics, provisional_gates_pass
-from evals.models import load_dataset
+from eval_harness.metrics import calculate_metrics, provisional_gates_pass
+from eval_harness.models import load_dataset
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_dataset_covers_required_categories_and_gold_predictions_pass() -> None:
-    cases = load_dataset(ROOT / "evals" / "dataset.yaml")
+    cases = load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
     topics = YamlTopicRepository(ROOT / "knowledge")
     topic_map = {case.topic_id: topics.get(case.topic_id) for case in cases}
     required_categories = {
@@ -51,7 +51,7 @@ def test_dataset_covers_required_categories_and_gold_predictions_pass() -> None:
 
 
 def test_false_completion_metric_detects_unsafe_finish() -> None:
-    all_cases = load_dataset(ROOT / "evals" / "dataset.yaml")
+    all_cases = load_dataset(ROOT / "eval" / "evaluator_dataset.yaml")
     case = next(item for item in all_cases if item.id == "ambiguous_group_id")
     topic = YamlTopicRepository(ROOT / "knowledge").get(case.topic_id)
     prediction = EvaluationResult(
