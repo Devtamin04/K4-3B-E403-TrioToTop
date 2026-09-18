@@ -37,6 +37,8 @@ class EvaluatorEvidencePayload(BaseModel):
     judgment: Judgment
     explanation: str = Field(min_length=1)
     confidence: float = Field(ge=0, le=1)
+    demonstrated_elements: list[str] = Field(default_factory=list)
+    inference_used: bool = False
 
 
 class EvaluatorOutputPayload(BaseModel):
@@ -100,12 +102,27 @@ class EvaluationOutputValidator:
             if payload.recommended_target not in valid_targets:
                 raise InvalidEvaluationError("recommended target references an unknown ID")
 
+        repeated = set(payload.covered) & state.covered_concepts
+        if repeated:
+            raise InvalidEvaluationError(
+                "evaluation is strictly per turn; these concepts are already covered: "
+                f"{sorted(repeated)}"
+            )
+
         canonical_evidence: list[Evidence] = []
         for item in payload.evidence:
             exact_quote = find_exact_normalized_span(latest_user_message, item.user_quote)
             if exact_quote is None:
                 raise InvalidEvaluationError(
                     "evidence quote must originate from the latest user message"
+                )
+            unknown_elements = (
+                set(item.demonstrated_elements) - topic.concept(item.concept_id).element_ids
+            )
+            if unknown_elements:
+                raise InvalidEvaluationError(
+                    f"evidence for {item.concept_id} references unknown elements: "
+                    f"{sorted(unknown_elements)}"
                 )
             canonical_evidence.append(
                 Evidence(
@@ -115,6 +132,8 @@ class EvaluationOutputValidator:
                     explanation=item.explanation,
                     confidence=item.confidence,
                     turn=state.turn_count + 1,
+                    demonstrated_elements=item.demonstrated_elements,
+                    inference_used=item.inference_used,
                 )
             )
 
@@ -131,6 +150,8 @@ class EvaluationOutputValidator:
             raise InvalidEvaluationError("every covered concept requires correct evidence")
         if not set(payload.unclear) <= unclear_ids:
             raise InvalidEvaluationError("every unclear concept requires unclear evidence")
+
+        self._validate_coverage_is_demonstrated(topic, payload, canonical_evidence)
 
         for misconception_id in payload.misconceptions:
             concept_id = topic.misconception(misconception_id).concept_id
@@ -159,10 +180,42 @@ class EvaluationOutputValidator:
             confidence=payload.confidence,
         )
 
+    @staticmethod
+    def _validate_coverage_is_demonstrated(
+        topic: TopicDefinition,
+        payload: EvaluatorOutputPayload,
+        canonical_evidence: list[Evidence],
+    ) -> None:
+        """Coverage must rest on the learner's own words.
+
+        The demonstrated elements are the load-bearing check: the model must
+        point at what the quote actually shows. ``inference_used`` is an
+        additional self-reported signal and is never relied on alone.
+        """
+
+        for concept_id in payload.covered:
+            supporting = [
+                item
+                for item in canonical_evidence
+                if item.concept_id == concept_id and item.judgment is Judgment.CORRECT
+            ]
+            if any(item.inference_used for item in supporting):
+                raise InvalidEvaluationError(
+                    f"covered concept {concept_id} relies on inferred understanding"
+                )
+            demonstrated = frozenset[str]().union(
+                *(frozenset(item.demonstrated_elements) for item in supporting)
+            )
+            concept = topic.concept(concept_id)
+            if not concept.elements_satisfy_policy(demonstrated):
+                raise InvalidEvaluationError(
+                    f"covered concept {concept_id} does not satisfy its "
+                    f"{concept.coverage_policy.value} demonstration requirement; "
+                    f"demonstrated={sorted(demonstrated)}"
+                )
+
 
 class LlmEvaluator:
-    PROMPT_VERSION = "evaluator_v1"
-
     def __init__(
         self,
         *,
@@ -184,6 +237,7 @@ class LlmEvaluator:
         self._client = client
         self._model = model
         self._prompt = prompt_path.read_text(encoding="utf-8")
+        self._prompt_version = prompt_path.stem
         self._max_attempts = max_attempts
         self._timeout_seconds = timeout_seconds
         self._history_limit = history_limit
@@ -219,7 +273,7 @@ class LlmEvaluator:
                 logger.info(
                     "Evaluator succeeded prompt_version=%s model=%s attempt=%d "
                     "latency_ms=%d request_id=%s",
-                    self.PROMPT_VERSION,
+                    self._prompt_version,
                     response.model,
                     attempt,
                     round((time.monotonic() - started) * 1000),
@@ -229,7 +283,7 @@ class LlmEvaluator:
             except LlmPermanentError as error:
                 logger.exception(
                     "Evaluator permanent failure prompt_version=%s model=%s attempt=%d",
-                    self.PROMPT_VERSION,
+                    self._prompt_version,
                     self._model,
                     attempt,
                 )
@@ -239,7 +293,7 @@ class LlmEvaluator:
             except LlmRefusalError as error:
                 logger.warning(
                     "Evaluator refusal prompt_version=%s model=%s attempt=%d",
-                    self.PROMPT_VERSION,
+                    self._prompt_version,
                     self._model,
                     attempt,
                 )
@@ -249,7 +303,7 @@ class LlmEvaluator:
                 logger.warning(
                     "Evaluator attempt failed prompt_version=%s model=%s attempt=%d/%d "
                     "error_type=%s",
-                    self.PROMPT_VERSION,
+                    self._prompt_version,
                     self._model,
                     attempt,
                     self._max_attempts,

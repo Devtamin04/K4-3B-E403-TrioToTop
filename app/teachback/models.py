@@ -39,6 +39,23 @@ class TargetKind(StrEnum):
     MISCONCEPTION = "misconception"
 
 
+class CoveragePolicy(StrEnum):
+    ALL_ELEMENTS = "all_elements"
+    ANY_ELEMENT = "any_element"
+
+
+class ConceptElement(DomainModel):
+    """A unit of understanding the learner must demonstrate themselves.
+
+    Distinct from ``ConceptDefinition.description``, which states what is true.
+    An element states what the learner's own words must show, so it must never
+    contain a literal answer string.
+    """
+
+    id: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+
+
 class ConceptDefinition(DomainModel):
     id: str = Field(min_length=1)
     description: str = Field(min_length=1)
@@ -46,6 +63,30 @@ class ConceptDefinition(DomainModel):
     priority: int = Field(ge=0)
     probe_question: str = Field(min_length=1)
     clarify_question: str = Field(min_length=1)
+    required_elements: list[ConceptElement] = Field(default_factory=list)
+    coverage_policy: CoveragePolicy = CoveragePolicy.ALL_ELEMENTS
+
+    @model_validator(mode="after")
+    def validate_elements(self) -> ConceptDefinition:
+        element_ids = [element.id for element in self.required_elements]
+        if len(element_ids) != len(set(element_ids)):
+            raise ValueError(f"concept {self.id} has duplicate element IDs")
+        return self
+
+    @property
+    def element_ids(self) -> frozenset[str]:
+        return frozenset(element.id for element in self.required_elements)
+
+    def elements_satisfy_policy(self, demonstrated: frozenset[str]) -> bool:
+        """Whether demonstrated elements are enough for this concept."""
+
+        required = self.element_ids
+        if not required:
+            return True
+        satisfied = required & demonstrated
+        if self.coverage_policy is CoveragePolicy.ANY_ELEMENT:
+            return bool(satisfied)
+        return satisfied == required
 
 
 class MisconceptionDefinition(DomainModel):
@@ -109,6 +150,8 @@ class Evidence(DomainModel):
     explanation: str = Field(min_length=1)
     confidence: float = Field(ge=0, le=1)
     turn: int = Field(ge=1)
+    demonstrated_elements: list[str] = Field(default_factory=list)
+    inference_used: bool = False
 
 
 class EvaluationResult(DomainModel):
